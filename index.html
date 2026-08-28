@@ -238,7 +238,7 @@
 
     <div class="clients-grid">
       <article class="client">
-        <p class="num">Weekly &amp; fortnightly</p>
+        <p class="num">By Weekly</p>
         <h3>Busy households</h3>
         <p>The same clean on the same day, so you stop thinking about it. Most people start basic and stay there.</p>
       </article>
@@ -401,6 +401,36 @@
 </main>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<!-- shown once every smudge in the hero has been wiped away -->
+<div class="reward" id="reward" hidden role="dialog" aria-modal="true" aria-labelledby="rewardTitle">
+  <div class="reward-card">
+    <button type="button" class="reward-close" id="rewardClose" aria-label="Close">✕</button>
+    <p class="eyebrow">Spotless</p>
+    <h3 id="rewardTitle">You cleaned every last smudge.</h3>
+
+    <aside class="promo">
+      <span class="promo-tag">Exclusive offer</span>
+      <div class="deals">
+        <div class="deal">
+          <span class="amt">£5</span>
+          <span class="txt">off your first<b>Basic Clean</b></span>
+        </div>
+        <span class="deal-or" aria-hidden="true">or</span>
+        <div class="deal alt">
+          <span class="amt">£10</span>
+          <span class="txt">off your first<b>Deep Clean</b></span>
+        </div>
+      </div>
+      <p class="promo-note">Only on next week. Spaces are filling fast.</p>
+    </aside>
+
+    <div class="reward-actions">
+      <a class="btn" href="tel:07854350480">Call 07854 350480</a>
+      <a class="btn btn-ghost" href="#services">See what's included</a>
+    </div>
+  </div>
+</div>
 
 <div class="lightbox" id="lightbox" hidden role="dialog" aria-modal="true" aria-label="Photo gallery">
   <button type="button" class="lb-close" id="lbClose" aria-label="Close gallery">✕</button>

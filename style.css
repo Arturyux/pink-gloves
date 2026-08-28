@@ -171,6 +171,36 @@ body{overflow-x:hidden}
   to{transform:translate(var(--dx,0),var(--dy,-90px)) scale(var(--sc,.5));opacity:0}
 }
 
+/* --- dirt smudges the sponge corner of the glove wipes away.
+   main.js picks the artwork and the angle, so every rule that sets a transform
+   has to carry --rot through or the spot would snap upright mid-animation. --- */
+.dirt{
+  position:absolute;pointer-events:none;z-index:1;
+  background-repeat:no-repeat;background-position:center;background-size:contain;
+  transform:rotate(var(--rot,0deg));
+  /* visible by default; the keyframe only plays it in, so it still shows when
+     prefers-reduced-motion switches animations off */
+  animation:dirt-in .35s ease;
+  transition:opacity .25s ease,transform .25s ease;
+}
+@keyframes dirt-in{from{opacity:0;transform:rotate(var(--rot,0deg)) scale(.4)}}
+.dirt.cleared{opacity:0;transform:rotate(var(--rot,0deg)) scale(.3)}
+
+.sparkle{
+  position:absolute;pointer-events:none;z-index:3;
+  width:var(--s,12px);height:var(--s,12px);
+  /* saturated toward the edge — a white sparkle would vanish on the blush background */
+  background:radial-gradient(circle,#fff 0%,var(--pink-soft) 28%,var(--pink) 72%,var(--pink-deep) 100%);
+  filter:drop-shadow(0 0 3px rgba(225,42,127,.55));
+  clip-path:polygon(50% 0%,60% 40%,100% 50%,60% 60%,50% 100%,40% 60%,0% 50%,40% 40%);
+  animation:sparkle-pop var(--dur,700ms) ease-out forwards;
+}
+@keyframes sparkle-pop{
+  0%{opacity:0;transform:translate(0,0) scale(.2) rotate(0deg)}
+  35%{opacity:1;transform:translate(calc(var(--dx,0px)*.4),calc(var(--dy,0px)*.4)) scale(1.15) rotate(45deg)}
+  100%{opacity:0;transform:translate(var(--dx,0px),var(--dy,0px)) scale(.35) rotate(110deg)}
+}
+
 /* from tablet up the glove floats free, over the copy, top layer */
 @media(min-width:721px){
   .hero-grid{position:relative;grid-template-columns:1fr}
@@ -321,6 +351,48 @@ body{overflow-x:hidden}
 }
 .services .tier-hint:hover{background:var(--pink-soft);transform:translateY(-1px)}
 .tier-hint[hidden]{display:none}
+
+/* ---- reward modal, shown once every smudge is wiped ----
+   The offer inside reuses .promo wholesale, so it stays in step with the hero
+   band automatically. Sits above the lightbox (300) and the sticky nav (60). */
+.reward{
+  position:fixed;inset:0;z-index:400;
+  display:grid;place-items:center;padding:20px;
+  background:rgba(42,31,37,.55);
+  -webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);
+}
+.reward[hidden]{display:none}
+/* Backdrop and card are animated separately: the dark wash fades while the card
+   rises a touch behind it, which reads far softer than the card alone popping
+   in over an instantly-black screen. Keyframes rather than transitions, because
+   the element comes out of display:none and a transition wouldn't run. */
+.reward{animation:reward-bg-in .3s ease both}
+.reward.closing{animation:reward-bg-out .22s ease both}
+.reward-card{
+  position:relative;width:min(94vw,560px);max-height:90vh;overflow:auto;
+  background:var(--blush);border:1px solid var(--line);border-radius:var(--r);
+  box-shadow:0 30px 60px -30px rgba(42,31,37,.6);
+  padding:30px 26px;text-align:center;
+  animation:reward-in .46s cubic-bezier(.21,.87,.32,1.04) both;
+}
+.reward.closing .reward-card{animation:reward-out .22s ease both}
+@keyframes reward-bg-in{from{opacity:0}}
+@keyframes reward-bg-out{to{opacity:0}}
+@keyframes reward-in{from{opacity:0;transform:translateY(22px) scale(.94)}}
+@keyframes reward-out{to{opacity:0;transform:translateY(10px) scale(.97)}}
+.reward-card h3{
+  font-family:"Jost",sans-serif;font-weight:500;font-size:24px;
+  color:var(--ink);margin:6px 0 18px;
+}
+.reward-card .promo{text-align:left}
+.reward-close{
+  position:absolute;top:10px;right:10px;
+  width:34px;height:34px;border-radius:50%;border:0;cursor:pointer;
+  background:transparent;color:var(--muted);font-size:15px;
+  display:grid;place-items:center;transition:background .15s,color .15s;
+}
+.reward-close:hover{background:var(--pink-tint);color:var(--pink-deep)}
+.reward-actions{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:20px}
 
 .toast{
   position:fixed;left:50%;bottom:24px;z-index:999;

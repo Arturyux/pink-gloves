@@ -466,6 +466,24 @@ import galleryPhotos from 'virtual:gallery';
   lbWindow.addEventListener('pointercancel', endDrag);
 })();
 
+/* ---- the sponge corner of the glove image: the one "cleaning point", shared
+   by the bubble trail and the dirt wiping below. Returns stage-local
+   coordinates, since .glove-stage is the glove's offsetParent. ---- */
+const SPONGE_X = 0.18, SPONGE_Y = 0.12;
+function spongePoint(glove){
+  const cs = getComputedStyle(glove);
+  const lx = glove.offsetWidth * SPONGE_X;
+  const ly = glove.offsetHeight * SPONGE_Y;
+  if (typeof DOMMatrix === 'undefined' || !cs.transform || cs.transform === 'none'){
+    return { x: glove.offsetLeft + lx, y: glove.offsetTop + ly };
+  }
+  // the glove is translated, rotated and (at rest) sway-animated, so run the
+  // point through whatever matrix is currently on it
+  const [ox, oy] = cs.transformOrigin.split(' ').map(parseFloat);
+  const p = new DOMMatrix(cs.transform).transformPoint(new DOMPoint(lx - ox, ly - oy));
+  return { x: glove.offsetLeft + ox + p.x, y: glove.offsetTop + oy + p.y };
+}
+
 /* ---- draggable glove with bubble trail (stage 1) ---- */
 (function(){
   const stage = document.getElementById('gloveStage');
@@ -505,7 +523,7 @@ import galleryPhotos from 'virtual:gallery';
     rot = Math.max(-22, Math.min(22, rot * 0.86 + vx * 0.75));
 
     apply();
-    if (!reduce && Math.abs(vx) > 1) blow(e);
+    if (!reduce && Math.abs(vx) > 1) blow();
   });
 
   function release(){
@@ -525,18 +543,19 @@ import galleryPhotos from 'virtual:gallery';
   glove.addEventListener('pointerup', release);
   glove.addEventListener('pointercancel', release);
 
-  function blow(e){
+  function blow(){
     const now = performance.now();
     if (now - lastBubble < 55) return;
     lastBubble = now;
 
-    const r = stage.getBoundingClientRect();
+    // bubbles come off the sponge, not the cursor
+    const p = spongePoint(glove);
     const b = document.createElement('span');
     const size = 7 + Math.random() * 17;
     b.className = 'bubble';
     b.style.width = b.style.height = size + 'px';
-    b.style.left = (e.clientX - r.left - size / 2) + 'px';
-    b.style.top  = (e.clientY - r.top  - size / 2) + 'px';
+    b.style.left = (p.x - size / 2) + 'px';
+    b.style.top  = (p.y - size / 2) + 'px';
     b.style.setProperty('--dx', (Math.random() * 70 - 35) + 'px');
     b.style.setProperty('--dy', (-70 - Math.random() * 100) + 'px');
     b.style.setProperty('--sc', (0.35 + Math.random() * 0.55).toFixed(2));
@@ -546,6 +565,197 @@ import galleryPhotos from 'virtual:gallery';
   }
 
   if (reduce) glove.classList.remove('idle');
+})();
+
+/* ---- wipe-the-dirt: spots around the glove that only the sponge corner of the
+   glove clears, each popping into sparkles ---- */
+(function(){
+  const stage = document.getElementById('gloveStage');
+  const glove = document.getElementById('glove');
+  if (!stage || !glove || typeof DOMMatrix === 'undefined') return;
+
+  /* Master switch for the whole wipe-the-smudges game. Set to false and no
+     smudges are created at all — the glove still drags and blows bubbles. */
+  const ENABLED = true;
+  if (!ENABLED) return;
+
+  const MAX_SPOTS = 8;
+  const REFILL_MS = 5000;
+  /* base-relative, like the gallery manifest: a hardcoded "/img/..." string in
+     JS is not rewritten against `base`, so it would break in a subfolder */
+  const BASE = (import.meta.env.BASE_URL || '/').replace(/\/?$/, '/');
+  const SMUDGES = ['smudge_1.png', 'smudge_2.png', 'smudge_3.png'].map(f => BASE + 'img/' + f);
+  /* The play area spreads well past the glove's own box — mostly leftward, so
+     spots land across the headline copy rather than only around the glove.
+     The stage sits above the hero content (z-index 50) and is pointer-events
+     :none, so dirt reads as sitting on the text without blocking anything. */
+  const GROW_LEFT = 2.2, GROW_RIGHT = 0.22, GROW_UP = 0.18, GROW_DOWN = 0.5;
+  const REACH = 0.22;       // wipe radius, as a fraction of the glove's width
+  const MIN_GAP = 1.05;     // smudges are ragged, so a little overlap reads fine
+
+  const spots = new Map();  // element -> {cx, cy, size}
+  let refillTimer = null;
+  let won = false;
+
+  /* --- the reward modal, opened once the last smudge is gone --- */
+  const reward = document.getElementById('reward');
+  const rewardClose = document.getElementById('rewardClose');
+  let lastFocused = null;
+
+  function openReward(){
+    if (!reward) return;
+    lastFocused = document.activeElement;
+    reward.hidden = false;
+    document.body.style.overflow = 'hidden';
+    if (rewardClose) rewardClose.focus();
+  }
+  function closeReward(){
+    if (!reward || reward.hidden || reward.classList.contains('closing')) return;
+    // let the fade-out play before pulling it out of the layout
+    reward.classList.add('closing');
+    setTimeout(() => {
+      reward.classList.remove('closing');
+      reward.hidden = true;
+      document.body.style.overflow = '';
+      if (lastFocused) lastFocused.focus();
+    }, 220);
+  }
+  if (reward){
+    rewardClose && rewardClose.addEventListener('click', closeReward);
+    reward.addEventListener('click', e => { if (e.target === reward) closeReward(); });
+    reward.querySelectorAll('a').forEach(a => a.addEventListener('click', closeReward));
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && !reward.hidden) closeReward();
+    });
+  }
+
+  function bounds(){
+    const w = stage.clientWidth, h = stage.clientHeight || glove.offsetHeight;
+    return {
+      w, h,
+      left:  -w * GROW_LEFT,
+      right:  w * (1 + GROW_RIGHT),
+      top:   -h * GROW_UP,
+      bottom: h * (1 + GROW_DOWN),
+    };
+  }
+
+  function spawn(){
+    const { w, h, left, right, top, bottom } = bounds();
+    if (won || spots.size >= MAX_SPOTS || w < 60 || h < 60) return;
+
+    // smudges are irregular artwork rather than dots, so they want more room,
+    // and a per-spot jitter keeps the eight of them from looking stamped
+    const base = Math.max(34, Math.min(w * 0.42, 96));
+    const size = Math.round(base * (0.72 + Math.random() * 0.5));
+    // keep clear of wherever the sponge is right now, or the spot would be
+    // wiped the instant the glove twitches, before anyone has aimed at it
+    const t = spongePoint(glove);
+    // must clear the same radius the wipe test uses, size included, with margin
+    const safe = (glove.offsetWidth * REACH + size * 0.35) * 1.5;
+
+    let x, y, ok = false;
+    for (let attempt = 0; attempt < 20 && !ok; attempt++){
+      x = left + Math.random() * Math.max(1, right - left - size);
+      y = top  + Math.random() * Math.max(1, bottom - top - size);
+      const cx = x + size / 2, cy = y + size / 2;
+      if (Math.hypot(cx - t.x, cy - t.y) < safe) continue;
+      ok = true;
+      for (const s of spots.values()){
+        if (Math.hypot(cx - s.cx, cy - s.cy) < size * MIN_GAP) { ok = false; break; }
+      }
+    }
+    if (!ok) return;
+
+    const el = document.createElement('span');
+    el.className = 'dirt';
+    el.style.width = el.style.height = size + 'px';
+    el.style.left = x + 'px';
+    el.style.top  = y + 'px';
+    el.style.backgroundImage = 'url("' + SMUDGES[Math.floor(Math.random() * SMUDGES.length)] + '")';
+    el.style.setProperty('--rot', Math.round(Math.random() * 360) + 'deg');
+    stage.appendChild(el);
+    spots.set(el, { cx: x + size / 2, cy: y + size / 2, size });
+  }
+
+  function sparkle(cx, cy){
+    for (let i = 0; i < 6; i++){
+      const s = document.createElement('span');
+      const size = 10 + Math.random() * 12;
+      const angle = (Math.PI * 2 * i) / 6 + Math.random() * 0.6;
+      const dist = 20 + Math.random() * 28;
+      s.className = 'sparkle';
+      s.style.setProperty('--s', size + 'px');
+      s.style.setProperty('--dx', (Math.cos(angle) * dist).toFixed(1) + 'px');
+      s.style.setProperty('--dy', (Math.sin(angle) * dist).toFixed(1) + 'px');
+      s.style.setProperty('--dur', (600 + Math.random() * 400) + 'ms');
+      s.style.left = (cx - size / 2) + 'px';
+      s.style.top  = (cy - size / 2) + 'px';
+      stage.appendChild(s);
+      // animationend never fires when prefers-reduced-motion disables
+      // animations, so this timeout is what actually guarantees cleanup
+      setTimeout(() => s.remove(), 1200);
+    }
+  }
+
+  function scheduleRefill(){
+    if (refillTimer) return;
+    refillTimer = setTimeout(() => {
+      refillTimer = null;
+      spawn();
+      if (spots.size < MAX_SPOTS) scheduleRefill();
+    }, REFILL_MS);
+  }
+
+  function wipe(el){
+    const spot = spots.get(el);
+    spots.delete(el);
+    el.classList.add('cleared');
+    setTimeout(() => el.remove(), 300);
+    sparkle(spot.cx, spot.cy);
+
+    if (spots.size === 0){
+      // board clear: stop topping it back up, and pay the reward out once the
+      // last sparkle has had a moment to land
+      won = true;
+      clearTimeout(refillTimer);
+      refillTimer = null;
+      setTimeout(openReward, 600);
+      return;
+    }
+    scheduleRefill();
+  }
+
+  glove.addEventListener('pointermove', () => {
+    if (!spots.size) return;
+    const p = spongePoint(glove);
+    const reach = glove.offsetWidth * REACH;
+    // deleting entries mid-iteration is well defined for a Map
+    for (const [el, spot] of spots){
+      // count the smudge's own spread, so brushing its edge cleans it rather
+      // than only a hit dead on the centre — they're far wider than the old dots
+      if (Math.hypot(p.x - spot.cx, p.y - spot.cy) <= reach + spot.size * 0.35) wipe(el);
+    }
+  });
+
+  // the stage resizes with the breakpoints; pull stray spots back inside
+  if (typeof ResizeObserver !== 'undefined'){
+    new ResizeObserver(() => {
+      const { left, right, top, bottom } = bounds();
+      for (const [el, spot] of spots){
+        const x = Math.min(Math.max(spot.cx - spot.size / 2, left), right - spot.size);
+        const y = Math.min(Math.max(spot.cy - spot.size / 2, top), bottom - spot.size);
+        el.style.left = x + 'px';
+        el.style.top  = y + 'px';
+        spot.cx = x + spot.size / 2;
+        spot.cy = y + spot.size / 2;
+      }
+    }).observe(stage);
+  }
+
+  function start(){ for (let i = 0; i < MAX_SPOTS; i++) spawn(); }
+  if (glove.complete && glove.naturalWidth) start();
+  else glove.addEventListener('load', start, { once: true });
 })();
 
 /* ---- year ---- */
