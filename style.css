@@ -475,17 +475,21 @@ body{overflow-x:hidden}
   padding:20px;
 }
 .lightbox[hidden]{display:none}
+/* One fixed frame for every photo, sized to the viewport rather than to any
+   one aspect ratio. `object-fit:contain` then lets each image fill whichever
+   dimension it can — portrait shots run the full height, landscape the full
+   width — so a tall photo is no longer shrunk into a wide box.
+
+   The frame deliberately does NOT resize per slide: the track is translated by
+   a percentage of its own width, so animating the frame would drag the photo
+   sideways mid-transition. Keeping it fixed is what makes the slide clean.
+   It's transparent for the same reason — no visible letterbox to size around. */
 .lb-window{
-  position:relative;width:min(90vw,860px);aspect-ratio:4/3;
-  border-radius:14px;overflow:hidden;background:#000;touch-action:pan-y;
-  transition:width .3s ease,aspect-ratio .3s ease;
+  position:relative;width:min(92vw,1000px);height:min(86vh,900px);
+  overflow:hidden;touch-action:pan-y;
 }
-/* a portrait photo sitting in a 4:3 frame renders tiny with big bars either
-   side, so give it a tall frame instead — main.js flips this class per slide.
-   The 64vh term keeps the taller frame inside the viewport. */
-.lb-window.portrait{width:min(90vw,64vh,620px);aspect-ratio:3/4}
 .lb-track{display:flex;height:100%;transition:transform .4s cubic-bezier(.4,0,.2,1)}
-.lb-track img{flex:0 0 100%;width:100%;height:100%;object-fit:contain;background:#000}
+.lb-track img{flex:0 0 100%;width:100%;height:100%;object-fit:contain}
 .lb-close{
   position:absolute;top:18px;right:18px;z-index:3;
   width:40px;height:40px;border-radius:50%;border:0;cursor:pointer;
@@ -514,6 +518,14 @@ body{overflow-x:hidden}
 .cta-band h2{margin:0;color:var(--white)}
 .cta-band p{color:rgba(255,255,255,.9);margin-top:6px}
 .cta-band .btn{background:var(--white);color:var(--pink-deep);box-shadow:none}
+/* the secondary button on the pink band is an outline, not a solid — must come
+   after the rule above, which has the same specificity and would otherwise
+   leave it white-on-white */
+.cta-band .btn-ghost{
+  background:transparent;color:var(--white);
+  box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.7);
+}
+.cta-band .btn-ghost:hover{background:rgba(255,255,255,.15)}
 
 footer.site{border-top:1px solid var(--line);background:var(--white)}
 .foot-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:32px;padding:48px 0 32px}

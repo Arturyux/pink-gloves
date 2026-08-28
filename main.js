@@ -387,17 +387,10 @@ import galleryPhotos from 'virtual:gallery';
   function applyTransform(extraPx){
     lbTrack.style.transform = 'translateX(calc(' + (-index * 100) + '% + ' + (extraPx || 0) + 'px))';
   }
-  // portrait shots get a tall frame so they aren't shrunk to fit a 4:3 box
-  function applyOrientation(){
-    const img = lbTrack.children[index];
-    if (!img || !img.naturalWidth) return;
-    lbWindow.classList.toggle('portrait', img.naturalHeight > img.naturalWidth);
-  }
   function go(i){
     index = (i + slideCount) % slideCount;
     setTransition(true);
     applyTransform(0);
-    applyOrientation();
   }
   function next(){ go(index + 1); }
   function prev(){ go(index - 1); }
@@ -413,15 +406,12 @@ import galleryPhotos from 'virtual:gallery';
       const img = document.createElement('img');
       img.src = url;
       img.alt = '';
-      // dimensions are unknown until it decodes, so re-check the frame then
-      img.addEventListener('load', applyOrientation);
       lbTrack.appendChild(img);
     });
     slideCount = urls.length;
     index = 0;
     setTransition(false);
     applyTransform(0);
-    applyOrientation();
     lastFocused = document.activeElement;
     lightbox.hidden = false;
     document.body.style.overflow = 'hidden';
