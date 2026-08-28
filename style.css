@@ -387,7 +387,7 @@ body{overflow-x:hidden}
 .rating-bar .src{margin-left:auto;font-size:13px;color:var(--muted)}
 .carousel{margin-top:16px}
 .review-window{position:relative;overflow:hidden;border-radius:var(--r);touch-action:pan-y}
-.review-grid{display:flex;transition:transform .5s cubic-bezier(.4,0,.2,1)}
+.review-grid{display:flex;gap:16px;transition:transform .5s cubic-bezier(.4,0,.2,1)}
 .car-arrow{
   position:absolute;top:50%;transform:translateY(-50%);
   width:42px;height:42px;border-radius:50%;
@@ -399,6 +399,9 @@ body{overflow-x:hidden}
 }
 .car-prev{left:10px}
 .car-next{right:10px}
+/* needed because the display:grid above would otherwise beat the UA sheet's
+   [hidden] rule; main.js hides the arrows when every review already fits */
+.car-arrow[hidden]{display:none}
 .car-arrow:focus-visible,.car-arrow:active{
   opacity:1;background:var(--pink);color:var(--white);border-color:var(--pink);
   box-shadow:0 0 0 7px rgba(225,42,127,.18);
@@ -409,7 +412,12 @@ body{overflow-x:hidden}
     box-shadow:0 0 0 7px rgba(225,42,127,.18);
   }
 }
-.review{background:var(--white);border:1px solid var(--line);border-radius:var(--r);padding:22px;flex:0 0 100%;min-width:0}
+/* three cards per view on desktop (two 16px gaps), one per view once it narrows.
+   main.js reads the resulting card pitch, so the carousel paging follows along. */
+.review{
+  background:var(--white);border:1px solid var(--line);border-radius:var(--r);padding:22px;
+  flex:0 0 calc((100% - 32px) / 3);min-width:0;
+}
 .review .stars{font-size:15px;margin-bottom:10px}
 .review blockquote{font-size:15px;line-height:1.6}
 .review footer{display:flex;align-items:center;gap:11px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
@@ -519,6 +527,7 @@ footer.site{border-top:1px solid var(--line);background:var(--white)}
 /* ============ responsive ============ */
 @media(max-width:940px){
   .tiers{grid-template-columns:1fr}
+  .review{flex-basis:100%}   /* one review per view once three no longer fit */
   .clients-grid{grid-template-columns:repeat(2,1fr)}
   .gallery{grid-template-columns:repeat(2,1fr);grid-auto-rows:150px}
   .shot:nth-child(1){grid-column:span 2;grid-row:span 1}

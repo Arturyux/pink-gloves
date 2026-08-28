@@ -174,7 +174,7 @@ function showToast(msg){
     const text = buildText();
     quoteText.value = text;
     const subject = 'Cleaning quote request: ' + tier;
-    emailBtn.href = 'mailto:hello@pinkglovescleaning.co.uk?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(text);
+    emailBtn.href = 'mailto:testing@pinkglovesservices.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(text);
     openQuote();
   }
 
@@ -246,18 +246,39 @@ function showToast(msg){
 
   const DEFAULT_MS = 6000;
   const FAST_MS = 2000;
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   let index = 0;
   let intervalMs = DEFAULT_MS;
   let timer = null;
+  let step = 0;      // distance from one card's left edge to the next, gap included
+  let maxIndex = 0;  // last scroll position that still fills the window
+
+  // The number of cards on screen is set in CSS (three on desktop, one when it
+  // narrows), so read the pitch back off the layout rather than assuming it.
+  function measure(){
+    step = slides[1].offsetLeft - slides[0].offsetLeft;
+    const visible = step > 0 ? Math.max(1, Math.round(windowEl.clientWidth / step)) : 1;
+    maxIndex = Math.max(0, slides.length - visible);
+    if (index > maxIndex) index = maxIndex;
+
+    // every review already fits: nothing to page through
+    const idle = maxIndex === 0;
+    prevBtn.hidden = nextBtn.hidden = idle;
+    if (idle) { clearInterval(timer); timer = null; }
+    else if (!timer && !reduce) restart();
+
+    setTransition(false);
+    applyTransform(0);
+  }
 
   function setTransition(on){
     track.style.transition = on ? 'transform .5s cubic-bezier(.4,0,.2,1)' : 'none';
   }
   function applyTransform(extraPx){
-    track.style.transform = 'translateX(calc(' + (-index * 100) + '% + ' + (extraPx || 0) + 'px))';
+    track.style.transform = 'translateX(' + (-index * step + (extraPx || 0)) + 'px)';
   }
   function go(i){
-    index = (i + slides.length) % slides.length;
+    index = i < 0 ? maxIndex : (i > maxIndex ? 0 : i); // wrap around at both ends
     setTransition(true);
     applyTransform(0);
   }
@@ -266,7 +287,7 @@ function showToast(msg){
 
   function restart(){
     clearInterval(timer);
-    timer = setInterval(next, intervalMs);
+    if (maxIndex > 0) timer = setInterval(next, intervalMs);
   }
   function setSpeed(ms){
     intervalMs = ms;
@@ -287,7 +308,7 @@ function showToast(msg){
   let dragging = false, startX = 0, dragDelta = 0;
 
   windowEl.addEventListener('pointerdown', e => {
-    if (e.target.closest('.car-arrow')) return;
+    if (maxIndex === 0 || e.target.closest('.car-arrow')) return;
     dragging = true;
     startX = e.clientX;
     dragDelta = 0;
@@ -303,7 +324,7 @@ function showToast(msg){
   function endDrag(){
     if (!dragging) return;
     dragging = false;
-    const threshold = windowEl.clientWidth * 0.18;
+    const threshold = step * 0.18;
     if (dragDelta <= -threshold) next();
     else if (dragDelta >= threshold) prev();
     else { setTransition(true); applyTransform(0); }
@@ -312,8 +333,9 @@ function showToast(msg){
   windowEl.addEventListener('pointerup', endDrag);
   windowEl.addEventListener('pointercancel', endDrag);
 
-  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (!reduce) restart();
+  measure();
+  // the card pitch changes with the viewport, so re-derive it on resize
+  if (typeof ResizeObserver !== 'undefined') new ResizeObserver(measure).observe(windowEl);
 })();
 
 /* ---- gallery: auto-detects photos dropped into /gallery/<category>/ at build time,
