@@ -1,7 +1,8 @@
 /* ---- mobile menu: animated drawer, height measured via scrollHeight ---- */
 const burger = document.getElementById('burger');
 const links  = document.getElementById('navlinks');
-const mobileNav = window.matchMedia('(max-width:720px)');
+// must match the burger-nav media query in style.css, landscape arm included
+const mobileNav = window.matchMedia('(max-width:720px), (max-height:500px) and (orientation:landscape)');
 
 /* The CSS caps the closed drawer at max-height:0. Setting the open height to a
    measured value rather than a generous constant matters on the way out: from a
@@ -11,7 +12,13 @@ const mobileNav = window.matchMedia('(max-width:720px)');
    the padding, is never mid-transition and never capped, so its rendered height
    is always the exact target for the outer box to animate to. */
 const drawer = links.querySelector('.nav-drawer');
-const drawerHeight = () => (drawer ? drawer.getBoundingClientRect().height : links.scrollHeight);
+function drawerHeight(){
+  const natural = drawer ? drawer.getBoundingClientRect().height : links.scrollHeight;
+  // a rotated phone is only ~390px tall, so the drawer can be taller than what
+  // is left below the bar — cap it there and let the CSS scroll the remainder
+  const room = window.innerHeight - links.getBoundingClientRect().top - 12;
+  return Math.max(0, Math.min(natural, room));
+}
 
 function setMenu(open){
   links.classList.toggle('open', open);
@@ -147,7 +154,7 @@ function showToast(msg){
   const quoteTierEl   = document.getElementById('quoteTier');
   const quoteExtrasEl = document.getElementById('quoteExtrasLine');
   const quoteText     = document.getElementById('quoteText');
-  const emailBtn      = document.getElementById('quoteEmailBtn');
+  const waBtn         = document.getElementById('quoteWhatsAppBtn');
   const copyBtn       = document.getElementById('quoteCopyBtn');
   const resetBtn      = document.getElementById('quoteReset');
   const extrasSection = document.querySelector('.extras');
@@ -165,8 +172,9 @@ function showToast(msg){
       'Service: ' + tier,
       'Extras: ' + (extras.size ? [...extras].join(', ') : 'None'),
       '',
-      'My address: (to see how far you are)',
-      'Preferred date/time: (to see if we are available)',
+      // *…* is WhatsApp's bold syntax, so these prompts stand out in the chat
+      'My address: *(to see how far you are)*',
+      'Preferred date/time: *(to see if we are available)*',
       'Extra questions: (optional)',
       '',
       'Thanks!'
@@ -199,8 +207,9 @@ function showToast(msg){
     quoteExtrasEl.textContent = extras.size ? '+ ' + [...extras].join(', ') : '';
     const text = buildText();
     quoteText.value = text;
-    const subject = 'Cleaning quote request: ' + tier;
-    emailBtn.href = 'mailto:testing@pinkglovesservices.com?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(text);
+    // wa.me carries the whole message in the URL, so WhatsApp opens with it
+    // already typed out and the visitor only has to hit send
+    waBtn.href = 'https://wa.me/447854350480?text=' + encodeURIComponent(text);
     openQuote();
   }
 
@@ -605,7 +614,7 @@ function spongePoint(glove){
   const ENABLED = true;
   if (!ENABLED) return;
 
-  const MAX_SPOTS = 8;
+  const MAX_SPOTS = 5;
   const REFILL_MS = 5000;
   /* base-relative, like the gallery manifest: a hardcoded "/img/..." string in
      JS is not rewritten against `base`, so it would break in a subfolder */

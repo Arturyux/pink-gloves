@@ -122,8 +122,8 @@ All colour and radius decisions go through CSS custom properties at the top of
 --pink:#E12A7F        /* primary, buttons, accents */
 --pink-deep:#A8135C   /* headings inside cards, hover text */
 --pink-soft:#FCE1EC   /* avatars, gradient stops */
---pink-tint:#FFF1F6   /* section backgrounds, chips */
---blush:#FFF8FA       /* page background */
+--pink-tint:#FFF7FA   /* section backgrounds, chips */
+--blush:#FFFBFC       /* page background */
 --ink:#2A1F25         /* body text, promo tag background */
 --muted:#7E6B74       /* secondary text */
 --line:#F4D3E1        /* all borders */
@@ -140,21 +140,26 @@ All colour and radius decisions go through CSS custom properties at the top of
 **Conventions**
 - `.eyebrow` = 12px, 600, `.28em` tracking, uppercase, pink. Every section opens
   with one.
-- `.btn` = filled pink pill. `.btn-ghost` = same shape, inset 1.5px pink border.
+- `.btn` = pastel pink pill (`--pink-soft` fill, `--pink-deep` text); hover
+  deepens the tint rather than brightening, which would wash a pastel out.
+  `.btn-ghost` = same shape, inset 1.5px pink border.
 - `.wrap` = max-width 1120px, 22px side padding. Every section uses it.
 - `section` padding: `clamp(56px,8vw,92px) 0`.
 - Alternating section backgrounds: blush → pink-tint → blush → pink-tint → blush.
+  Clients carries the tint (it sits second); services runs on the page blush.
+  Reordering sections means re-checking this, or two tinted ones end up adjacent.
 
 ---
 
-## Sections (built in numbered stages, kept in this order)
+## Sections (table is page order; the Stage column is build order, so it no
+longer runs 1-2-3 — Clients was moved above Services later on)
 
 | Stage | Section | id |
 |---|---|---|
 | 0 | Navbar (sticky) | — |
 | 1 | Hero: promo band + H1 + CTAs + draggable glove | — |
-| 2 | Services: 3 cumulative tiers + extras chips | `#services` |
 | 3 | Clients: 4 audience cards | `#clients` |
+| 2 | Services: 3 cumulative tiers + extras chips | `#services` |
 | 4 | Reviews: rating bar + 3 review cards | `#reviews` |
 | 5 | Gallery: 6-tile grid, first spans 2×2 | `#gallery` |
 | 0 | CTA band + footer | `#book` |
