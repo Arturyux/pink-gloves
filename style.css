@@ -3,8 +3,8 @@
   --pink:#E12A7F;
   --pink-deep:#A8135C;
   --pink-soft:#FCE1EC;
-  --pink-tint:#FFF1F6;
-  --blush:#FFF8FA;
+  --pink-tint:#FFF7FA;
+  --blush:#FFFBFC;
   --ink:#2A1F25;
   --muted:#7E6B74;
   --line:#F4D3E1;
@@ -39,7 +39,7 @@ section{padding:clamp(56px,8vw,92px) 0}
 /* ============ stage 0 · navbar ============ */
 .nav{
   position:sticky;top:0;z-index:60;
-  background:rgba(255,248,250,.88);
+  background:rgba(255,251,252,.88);
   backdrop-filter:blur(12px);
   border-bottom:1px solid var(--line);
 }
@@ -57,11 +57,13 @@ section{padding:clamp(56px,8vw,92px) 0}
   font-family:"Jost",sans-serif;font-weight:500;font-size:15px;
   display:inline-flex;align-items:center;gap:9px;
   padding:12px 22px;border-radius:999px;text-decoration:none;border:0;cursor:pointer;
-  background:var(--pink);color:var(--white);
-  box-shadow:0 8px 20px -10px rgba(225,42,127,.8);
-  transition:transform .12s ease,filter .15s ease;
+  background:var(--pink-soft);color:var(--pink-deep);
+  box-shadow:0 8px 20px -12px rgba(225,42,127,.45);
+  transition:transform .12s ease,background .15s ease;
 }
-.btn:hover{filter:brightness(1.07);transform:translateY(-1px)}
+/* pastel fills can't brighten on hover the way the old solid pink did — that
+   just washes them out — so deepen the tint instead */
+.btn:hover{background:#F8D2E2;transform:translateY(-1px)}
 .btn-ghost{background:transparent;color:var(--pink-deep);box-shadow:inset 0 0 0 1.5px var(--pink)}
 .btn-ghost:hover{background:var(--pink-tint)}
 .nav .btn{flex:none}
@@ -87,7 +89,7 @@ body{overflow-x:hidden}
 .hero{padding-top:clamp(24px,4vw,40px);padding-bottom:clamp(40px,6vw,64px);position:relative}
 .hero::before{
   content:"";position:absolute;top:-180px;right:0;width:560px;height:560px;
-  background:radial-gradient(circle,rgba(225,42,127,.13),transparent 68%);z-index:-1;pointer-events:none;
+  background:radial-gradient(circle,rgba(225,42,127,.08),transparent 68%);z-index:-1;pointer-events:none;
 }
 
 /* --- promo band, sits on top --- */
@@ -292,7 +294,7 @@ body{overflow-x:hidden}
 }
 .tier h3{font-family:"Jost",sans-serif;font-weight:600;font-size:22px;color:var(--pink-deep);letter-spacing:-.01em;text-align:center;margin-bottom:18px}
 .tier h3 .pill{
-  display:inline-block;background:var(--pink);color:var(--white);
+  display:inline-block;background:var(--pink-soft);color:var(--pink-deep);
   padding:6px 18px;border-radius:999px;
 }
 .tier .for{color:var(--muted);font-size:14.5px;margin:6px 0 18px;min-height:44px}
@@ -342,7 +344,7 @@ body{overflow-x:hidden}
   transition:background .15s,border-color .15s,color .15s;
 }
 .chip:hover{border-color:var(--pink)}
-.chip[aria-pressed="true"]{background:var(--pink);border-color:var(--pink);color:var(--white)}
+.chip[aria-pressed="true"]{background:var(--pink-soft);border-color:var(--pink);color:var(--pink-deep)}
 
 .services .tier-hint{
   display:block;width:max-content;max-width:90%;margin:28px auto 0;
@@ -372,7 +374,10 @@ body{overflow-x:hidden}
 .reward{animation:reward-bg-in .3s ease both}
 .reward.closing{animation:reward-bg-out .22s ease both}
 .reward-card{
-  position:relative;width:min(94vw,560px);max-height:90vh;overflow:auto;
+  /* 100% is the grid area, already inset by the overlay's 20px padding —
+     sizing off the viewport instead made the card wider than that area,
+     so it overflowed right rather than centring */
+  position:relative;width:min(100%,560px);max-height:90vh;overflow:auto;
   background:var(--blush);border:1px solid var(--line);border-radius:var(--r);
   box-shadow:0 30px 60px -30px rgba(42,31,37,.6);
   padding:30px 26px;text-align:center;
@@ -592,7 +597,7 @@ body{overflow-x:hidden}
 }
 .cta-band h2{margin:0;color:var(--white)}
 .cta-band p{color:rgba(255,255,255,.9);margin-top:6px}
-.cta-band .btn{background:var(--white);color:var(--pink-deep);box-shadow:none}
+.cta-band .btn{background:var(--pink-soft);color:var(--pink-deep);box-shadow:none}
 /* the secondary button on the pink band is an outline, not a solid — must come
    after the rule above, which has the same specificity and would otherwise
    leave it white-on-white */
@@ -641,8 +646,13 @@ footer.site{border-top:1px solid var(--line);background:var(--white)}
   .nav .btn{padding:12px 16px}
 }
 @media(max-width:720px){
-  .nav-in{height:79px}
-  .brand img{height:72px}
+  /* The row has to hold logo + three icons + burger inside as little as 276px
+     of content box on a 320px phone. Everything below is sized so the total
+     always lands under that; the logo scales with the viewport rather than
+     sitting at a fixed 72px, which is what pushed the burger off-screen. */
+  .nav-in{height:79px;gap:10px}
+  .brand{min-width:0}
+  .brand img{height:clamp(48px,16vw,72px)}
   /* The drawer stays displayed and collapses instead of toggling display, so
      it can actually animate — display isn't transitionable. top:100% keeps it
      pinned under the bar whatever height the bar ends up being. */
@@ -674,14 +684,15 @@ footer.site{border-top:1px solid var(--line);background:var(--white)}
   .drawer-call{
     display:block;width:max-content;margin:16px auto 0;
     padding:12px 24px!important;border-radius:999px;border-bottom:0!important;
-    background:var(--pink);color:var(--white)!important;font-weight:500;
-    box-shadow:0 8px 20px -10px rgba(225,42,127,.8);
+    background:var(--pink-soft);color:var(--pink-deep)!important;font-weight:500;
+    box-shadow:0 8px 20px -12px rgba(225,42,127,.45);
   }
-  .nav-links a.drawer-call:hover{background:var(--pink-deep)}
-  .burger{display:block;order:3;margin-left:6px}
-  .nav-socials{order:2;margin-left:auto;gap:6px}
-  .nav-socials .ico{width:34px;height:34px}
-  .nav-socials .ico svg{width:16px;height:16px}
+  .nav-links a.drawer-call:hover{background:#F8D2E2}
+  .burger{display:block;order:3;margin-left:0;padding:6px;flex:none}
+  .nav .socials{margin-left:auto}   /* drop the desktop 20px, auto handles it */
+  .nav-socials{order:2;gap:5px;flex:none}
+  .nav-socials .ico{width:clamp(28px,8.5vw,34px);height:clamp(28px,8.5vw,34px)}
+  .nav-socials .ico svg{width:15px;height:15px}
   .nav .btn{display:none}
   .clients-grid{grid-template-columns:1fr}
 }
