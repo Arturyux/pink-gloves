@@ -3,8 +3,8 @@
   --pink:#E12A7F;
   --pink-deep:#A8135C;
   --pink-soft:#FCE1EC;
-  --pink-tint:#FFF7FA;
-  --blush:#FFFBFC;
+  --white:#FFFFFF;
+  --white:#FFFBFC;
   --ink:#2A1F25;
   --muted:#7E6B74;
   --line:#F4D3E1;
@@ -15,7 +15,7 @@
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;overflow-x:hidden}
 body{
-  background:var(--blush);color:var(--ink);
+  background:var(--white);color:var(--ink);
   font-family:"Inter",system-ui,sans-serif;font-size:16px;line-height:1.65;
 }
 .wrap{max-width:1120px;margin:0 auto;padding:0 22px}
@@ -65,7 +65,7 @@ section{padding:clamp(38px,5vw,60px) 0}
    just washes them out — so deepen the tint instead */
 .btn:hover{background:#F8D2E2;transform:translateY(-1px)}
 .btn-ghost{background:transparent;color:var(--pink-deep);box-shadow:inset 0 0 0 1.5px var(--pink)}
-.btn-ghost:hover{background:var(--pink-tint)}
+.btn-ghost:hover{background:var(--white)}
 .nav .btn{flex:none}
 
 /* social icon buttons */
@@ -89,7 +89,7 @@ body{overflow-x:hidden}
 .hero{padding-top:clamp(24px,4vw,40px);padding-bottom:clamp(40px,6vw,64px);position:relative}
 .hero::before{
   content:"";position:absolute;top:-180px;right:0;width:560px;height:560px;
-  background:radial-gradient(circle,rgba(225,42,127,.08),transparent 68%);z-index:-1;pointer-events:none;
+  background:radial-gradient(circle,rgba(255,255,255),transparent 68%);z-index:-1;pointer-events:none;
 }
 
 /* --- promo band, sits on top --- */
@@ -115,14 +115,14 @@ body{overflow-x:hidden}
 .deal .txt b{display:block;color:var(--ink);font-weight:500;font-size:15px}
 .deal-or{
   width:30px;height:30px;border-radius:50%;flex:none;
-  background:var(--pink-tint);color:var(--pink);
+  background:var(--white);color:var(--pink);
   display:grid;place-items:center;font-family:"Jost",sans-serif;font-size:14px;
 }
 .promo-note{
   flex-basis:100%;width:100%;
   display:flex;align-items:center;justify-content:center;
   padding:13px 26px;text-align:center;
-  background:var(--pink-tint);border-top:1px solid var(--line);
+  background:var(--white);border-top:1px solid var(--line);
   font-size:14px;color:var(--pink-deep);
 }
 
@@ -194,7 +194,7 @@ body{overflow-x:hidden}
 .sparkle{
   position:absolute;pointer-events:none;z-index:3;
   width:var(--s,12px);height:var(--s,12px);
-  /* saturated toward the edge — a white sparkle would vanish on the blush background */
+  /* saturated toward the edge — a white sparkle would vanish on the white background */
   background:radial-gradient(circle,#fff 0%,var(--pink-soft) 28%,var(--pink) 72%,var(--pink-deep) 100%);
   filter:drop-shadow(0 0 3px rgba(225,42,127,.55));
   clip-path:polygon(50% 0%,60% 40%,100% 50%,60% 60%,50% 100%,40% 60%,0% 50%,40% 40%);
@@ -221,9 +221,9 @@ body{overflow-x:hidden}
 }
 
 /* ============ stage 2 · services ============ */
-/* Sections alternate blush -> tint -> blush -> tint -> blush. Clients now sits
-   second, so it takes the tint and services drops back to the page blush. */
-#clients{background:var(--pink-tint)}
+/* Sections alternate white -> tint -> white -> tint -> white. Clients now sits
+   second, so it takes the tint and services drops back to the page white. */
+#clients{background:var(--white)}
 .tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:34px}
 .tier{
   background:var(--white);border:1px solid var(--line);border-radius:var(--r);
@@ -304,7 +304,7 @@ body{overflow-x:hidden}
 /* signature: the tiers are cumulative, so say so and let it unfold */
 .inherits{
   width:100%;text-align:left;cursor:pointer;font:inherit;
-  background:var(--pink-tint);border:1px dashed var(--pink);border-radius:12px;
+  background:var(--white);border:1px dashed var(--pink);border-radius:12px;
   padding:11px 14px;color:var(--pink-deep);font-size:13.5px;
   display:flex;align-items:center;gap:8px;margin-bottom:16px;
   transition:background .15s;
@@ -340,7 +340,7 @@ body{overflow-x:hidden}
 .extras p{color:var(--muted);font-size:14.5px;margin-bottom:16px}
 .chips{display:flex;flex-wrap:wrap;gap:9px}
 .chip{
-  background:var(--pink-tint);border:1px solid var(--line);border-radius:999px;
+  background:var(--white);border:1px solid var(--line);border-radius:999px;
   padding:8px 16px;font-size:14px;color:var(--pink-deep);
   font-family:inherit;cursor:pointer;
   transition:background .15s,border-color .15s,color .15s;
@@ -351,7 +351,7 @@ body{overflow-x:hidden}
 .services .tier-hint{
   display:block;width:max-content;max-width:90%;margin:28px auto 0;
   font-family:"Jost",sans-serif;font-weight:500;font-size:14.5px;
-  color:var(--pink-deep);background:var(--pink-tint);
+  color:var(--pink-deep);background:var(--white);
   border:1.5px solid var(--pink);border-radius:999px;
   padding:12px 24px;cursor:pointer;
   transition:background .15s,transform .12s;
@@ -380,7 +380,7 @@ body{overflow-x:hidden}
      sizing off the viewport instead made the card wider than that area,
      so it overflowed right rather than centring */
   position:relative;width:min(100%,560px);max-height:90vh;overflow:auto;
-  background:var(--blush);border:1px solid var(--line);border-radius:var(--r);
+  background:var(--white);border:1px solid var(--line);border-radius:var(--r);
   box-shadow:0 30px 60px -30px rgba(42,31,37,.6);
   padding:30px 26px;text-align:center;
   animation:reward-in .46s cubic-bezier(.21,.87,.32,1.04) both;
@@ -401,7 +401,7 @@ body{overflow-x:hidden}
   background:transparent;color:var(--muted);font-size:15px;
   display:grid;place-items:center;transition:background .15s,color .15s;
 }
-.reward-close:hover{background:var(--pink-tint);color:var(--pink-deep)}
+.reward-close:hover{background:var(--white);color:var(--pink-deep)}
 .reward-actions{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:20px}
 
 .toast{
@@ -438,7 +438,7 @@ body{overflow-x:hidden}
 .quote-text{
   display:block;width:100%;resize:vertical;min-height:150px;
   font-family:"Inter",system-ui,sans-serif;font-size:14px;line-height:1.5;
-  color:var(--ink);background:var(--blush);border:1px solid var(--line);
+  color:var(--ink);background:var(--white);border:1px solid var(--line);
   border-radius:12px;padding:14px 16px;margin-bottom:14px;
 }
 .quote-actions{display:flex;flex-wrap:wrap;gap:10px}
@@ -459,7 +459,7 @@ body{overflow-x:hidden}
 .client p{color:var(--muted);font-size:14.5px}
 
 /* ============ stage 4 · reviews ============ */
-.reviews{background:var(--pink-tint)}
+.reviews{background:var(--white)}
 .rating-bar{
   display:flex;flex-wrap:wrap;align-items:center;gap:16px;margin-top:26px;
   background:var(--white);border:1px solid var(--line);border-radius:var(--r);padding:18px 22px;
@@ -516,7 +516,7 @@ body{overflow-x:hidden}
 .gallery{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:180px;gap:14px;margin-top:34px}
 .shot{
   border-radius:var(--r);overflow:hidden;position:relative;
-  background:linear-gradient(135deg,var(--pink-soft),var(--pink-tint));
+  background:linear-gradient(135deg,var(--pink-soft),var(--white));
   border:1px solid var(--line);
   display:grid;place-items:center;
 }
@@ -619,7 +619,7 @@ footer.site{border-top:1px solid var(--line);background:var(--white)}
 .foot-brand img{height:100px;width:auto;margin-bottom:6px}
 .foot-brand p{color:var(--muted);font-size:14.5px;margin-top:8px;max-width:34ch}
 .foot-socials{margin-top:18px}
-.foot-socials .ico{background:var(--pink-tint)}
+.foot-socials .ico{background:var(--white)}
 .tel{font-family:"Jost",sans-serif;font-size:22px;color:var(--pink-deep);text-decoration:none;display:inline-block;margin-top:4px}
 .foot-bottom{
   border-top:1px solid var(--line);padding:18px 0;
