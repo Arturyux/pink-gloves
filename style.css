@@ -227,7 +227,7 @@ body{overflow-x:hidden}
 
 /* Basic Clean: small accent tucked in the bottom-right corner, not full-bleed */
 .tier-bg--basic{
-  opacity:1;                    /* how see-through: 0=invisible, 1=opaque */
+  opacity:.5;                    /* how see-through: 0=invisible, 1=opaque */
   --bg-size:100% auto;
   --bg-pos:-27px 140px;
   --bg-rotate:4deg;
@@ -236,7 +236,7 @@ body{overflow-x:hidden}
 
 /* Deep Clean: full-bleed, anchored toward the top so the action reads under the heading */
 .tier-bg--deep{
-  opacity:1;
+  opacity:.5;
   --bg-size:80% auto;
   --bg-pos:50px 290px;
   --bg-rotate:0deg;
@@ -245,7 +245,7 @@ body{overflow-x:hidden}
 
 /* Move In / Out: full-bleed, anchored toward the bottom, under the long checklist */
 .tier-bg--move{
-  opacity:1;
+  opacity:.5;
   --bg-size:70% auto;
   --bg-pos:88px 103px;
   --bg-rotate:1deg;
@@ -475,7 +475,15 @@ body{overflow-x:hidden}
   padding:20px;
 }
 .lightbox[hidden]{display:none}
-.lb-window{position:relative;width:min(90vw,860px);aspect-ratio:4/3;border-radius:14px;overflow:hidden;background:#000;touch-action:pan-y}
+.lb-window{
+  position:relative;width:min(90vw,860px);aspect-ratio:4/3;
+  border-radius:14px;overflow:hidden;background:#000;touch-action:pan-y;
+  transition:width .3s ease,aspect-ratio .3s ease;
+}
+/* a portrait photo sitting in a 4:3 frame renders tiny with big bars either
+   side, so give it a tall frame instead — main.js flips this class per slide.
+   The 64vh term keeps the taller frame inside the viewport. */
+.lb-window.portrait{width:min(90vw,64vh,620px);aspect-ratio:3/4}
 .lb-track{display:flex;height:100%;transition:transform .4s cubic-bezier(.4,0,.2,1)}
 .lb-track img{flex:0 0 100%;width:100%;height:100%;object-fit:contain;background:#000}
 .lb-close{
@@ -595,9 +603,9 @@ footer.site{border-top:1px solid var(--line);background:var(--white)}
   .tier .for{min-height:0}
   .tier .btn{align-self:center}
   .tier-checklist{text-align:left;align-self:stretch}
-  .tier-bg--basic{--bg-pos:0px 150px;--bg-rotate:0deg;--bg-size:80% auto;opacity:1}
-  .tier-bg--deep{--bg-pos:50px 0px;--bg-rotate:0deg;--bg-size:80% auto;opacity:1}
-  .tier-bg--move{--bg-pos:100px 70px;--bg-rotate:0deg;--bg-size:70% auto;opacity:1}
+  .tier-bg--basic{--bg-pos:0px 150px;--bg-rotate:0deg;--bg-size:80% auto;opacity:.5}
+  .tier-bg--deep{--bg-pos:50px 0px;--bg-rotate:0deg;--bg-size:80% auto;opacity:.5}
+  .tier-bg--move{--bg-pos:100px 70px;--bg-rotate:0deg;--bg-size:70% auto;opacity:.5}
   .inherits{justify-content:center;text-align:center}
   .inherits .chev{margin-left:8px}
   .inherited{text-align:center}

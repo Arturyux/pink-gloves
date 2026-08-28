@@ -27,17 +27,20 @@ index.html          # all markup, one page, anchor-linked sections
 style.css           # all styles, token-driven, ordered by stage
 main.js             # several independent IIFE-ish blocks (menu, tier disclosure,
                      # build-your-request, reviews carousel, gallery + lightbox, glove)
-vite.config.js      # base:'./', outDir dist
+vite.config.js      # base:'./', outDir dist, + the gallery-manifest plugin
 public/img/
   logo.png          # 600×240, wordmark + gloves on a line
   glove.png         # 520×780, glove holding a sponge (the draggable one)
-gallery/             # NOT under public/ — see "Gallery photos" below
-  living-room/
-  kitchen/
-  bathroom/
-  oven/
-  bedroom/
-  reviews/          # for the "Reviews from clients" gallery tile
+  mopping.png       # Basic Clean card background
+  cleaningwindow.png# Deep Clean card background
+  folding.png       # Move In / Out card background
+  gallery/          # see "Gallery photos" below
+    living-room/
+    kitchen/
+    bathroom/
+    oven/
+    bedroom/
+    reviews/        # for the "Reviews from clients" gallery tile
 ```
 
 `public/` is copied verbatim into `dist/`. Reference public assets with a
@@ -47,22 +50,29 @@ them as source imports and fail.
 
 ### Gallery photos
 
-The root-level `gallery/<category>/` folders are picked up automatically by
-`main.js` via `import.meta.glob('/gallery/*/*.{jpg,jpeg,png,webp,avif}', ...)`.
-Drop image files straight into the matching folder and rebuild (`npm run
-build`, which you already do for every deploy) — no code changes needed. Each
-gallery card's `.shot-bento` fills with a small bento/mosaic preview (up to 4
-thumbnails) and its pill button opens a swipeable lightbox with every photo in
-that category.
+Photos live in `public/img/gallery/<category>/`. Drop image files
+(`.jpg/.jpeg/.png/.webp/.avif`) straight into the matching folder — no code
+changes needed. Each gallery card's `.shot-bento` fills with a small
+bento/mosaic preview (up to 4 thumbnails) and its pill button opens a swipeable
+lightbox with every photo in that category. An empty category just shows the
+pink gradient placeholder; nothing breaks.
 
-**They deliberately live outside `public/`.** Vite copies `public/` verbatim
-without running it through the module graph, so `import.meta.glob` can't see
-into it — there's no way to auto-detect files dropped into a `public/`
-subfolder short of adding a backend, which contradicts the whole point of this
-being a static site. `gallery/` sits at the project root instead, so Vite
-processes it like any other asset (hashed filename, optimized, discoverable by
-glob). If a category folder is empty, its card just shows the existing pink
-gradient placeholder — nothing breaks.
+**`import.meta.glob` does not work here** — Vite copies `public/` verbatim
+without running it through the module graph, so a glob over it always comes
+back empty. (This silently emptied the gallery once already.) Instead, the
+`gallery-manifest` plugin in `vite.config.js` reads the folder with `fs` and
+serves the listing to `main.js` as `virtual:gallery`.
+
+Two consequences worth remembering:
+
+- The manifest is built when the dev server starts, so **restart `npm run dev`
+  after adding photos** (a plain browser refresh won't pick them up). `npm run
+  build` always reads fresh.
+- Manifest paths are stored without a leading slash (`img/gallery/…`) and get
+  `import.meta.env.BASE_URL` prefixed at runtime, which is what keeps them
+  working under `base: './'`. A hardcoded `/img/...` string in JS would *not*
+  be rewritten against `base` the way HTML/CSS references are, and would break
+  in a subfolder.
 
 There is no framework, no bundling of third-party libs, no CSS preprocessor.
 Fonts come from the Google Fonts CDN in `<head>`. Keep it that way unless there's
@@ -243,7 +253,7 @@ lightbox.
 | Email | `hello@pinkglovescleaning.co.uk` — **invented, unconfirmed** |
 | Opening hours | "Mon–Sat, 8am–6pm" — **invented, unconfirmed** |
 | Reviews | All three testimonials are written copy, not real clients |
-| Gallery | Six categories (incl. "Reviews from clients"), all empty — drop photos into `gallery/<category>/` and rebuild. See "Gallery photos" above. |
+| Gallery | Six categories (incl. "Reviews from clients"), populated with real photos. Add more by dropping files into `public/img/gallery/<category>/`. See "Gallery photos" above. |
 
 The Google review short link comes from Google Business Profile → "Ask for
 reviews". Better than linking the Maps listing, where users have to hunt for the
@@ -314,6 +324,5 @@ tier, and it stops being a pure static site.
   Transform-based so nothing reflows).
 - Booking form — would need Formspree / Web3Forms, since there's no backend.
 - Service area / coverage section.
-- Real gallery photos.
 - Favicon, OG tags, `robots.txt`, sitemap.
 - Live Google reviews (see above).

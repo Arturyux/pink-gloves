@@ -338,20 +338,21 @@ function showToast(msg){
   if (typeof ResizeObserver !== 'undefined') new ResizeObserver(measure).observe(windowEl);
 })();
 
-/* ---- gallery: auto-detects photos dropped into /gallery/<category>/ at build time,
-   fills each card with a bento preview, opens a swipeable lightbox on tap ---- */
-const galleryPhotos = import.meta.glob('/gallery/*/*.{jpg,jpeg,png,webp,avif}', { eager: true, query: '?url', import: 'default' });
+/* ---- gallery: auto-detects photos dropped into public/img/gallery/<category>/,
+   fills each card with a bento preview, opens a swipeable lightbox on tap.
+   The listing is built by the gallery-manifest plugin in vite.config.js —
+   public/ is copied verbatim by Vite, so import.meta.glob can't see into it. ---- */
+import galleryPhotos from 'virtual:gallery';
 
 (function(){
   const shots = document.querySelectorAll('.shot[data-category]');
   if (!shots.length) return;
 
+  // manifest paths are base-relative; BASE_URL keeps them right in a subfolder
+  const base = import.meta.env.BASE_URL || '/';
   const byCategory = {};
-  for (const path in galleryPhotos) {
-    const match = path.match(/^\/gallery\/([^/]+)\//);
-    if (!match) continue;
-    const cat = match[1];
-    (byCategory[cat] = byCategory[cat] || []).push(galleryPhotos[path]);
+  for (const cat in galleryPhotos) {
+    byCategory[cat] = galleryPhotos[cat].map(p => base.replace(/\/?$/, '/') + p);
   }
 
   shots.forEach(shot => {
@@ -386,10 +387,17 @@ const galleryPhotos = import.meta.glob('/gallery/*/*.{jpg,jpeg,png,webp,avif}', 
   function applyTransform(extraPx){
     lbTrack.style.transform = 'translateX(calc(' + (-index * 100) + '% + ' + (extraPx || 0) + 'px))';
   }
+  // portrait shots get a tall frame so they aren't shrunk to fit a 4:3 box
+  function applyOrientation(){
+    const img = lbTrack.children[index];
+    if (!img || !img.naturalWidth) return;
+    lbWindow.classList.toggle('portrait', img.naturalHeight > img.naturalWidth);
+  }
   function go(i){
     index = (i + slideCount) % slideCount;
     setTransition(true);
     applyTransform(0);
+    applyOrientation();
   }
   function next(){ go(index + 1); }
   function prev(){ go(index - 1); }
@@ -405,12 +413,15 @@ const galleryPhotos = import.meta.glob('/gallery/*/*.{jpg,jpeg,png,webp,avif}', 
       const img = document.createElement('img');
       img.src = url;
       img.alt = '';
+      // dimensions are unknown until it decodes, so re-check the frame then
+      img.addEventListener('load', applyOrientation);
       lbTrack.appendChild(img);
     });
     slideCount = urls.length;
     index = 0;
     setTransition(false);
     applyTransform(0);
+    applyOrientation();
     lastFocused = document.activeElement;
     lightbox.hidden = false;
     document.body.style.overflow = 'hidden';
