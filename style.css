@@ -47,6 +47,9 @@ section{padding:clamp(56px,8vw,92px) 0}
 .brand{display:block;flex:none;line-height:0}
 .brand img{height:108px;width:auto}
 .nav-links{display:flex;gap:24px;margin-left:auto;font-family:"Jost",sans-serif;font-size:15px}
+/* the wrapper only exists for the mobile drawer; on desktop it must not form a
+   box at all, so the links remain direct flex children of .nav-links */
+.nav-drawer{display:contents}
 .nav-links a{text-decoration:none;color:var(--muted);padding:4px 0;border-bottom:2px solid transparent;transition:color .15s,border-color .15s}
 .nav-links a:hover{color:var(--pink);border-color:var(--pink)}
 
@@ -649,20 +652,32 @@ footer.site{border-top:1px solid var(--line);background:var(--white)}
     border-bottom:1px solid var(--line);
     box-shadow:0 18px 30px -22px rgba(168,19,92,.5);
     overflow:hidden;
-    max-height:0;opacity:0;padding:0 22px;
+    max-height:0;opacity:0;padding:0;
     transform:translateY(-6px);
     pointer-events:none;   /* links aren't clickable while collapsed */
     transition:max-height .38s cubic-bezier(.4,0,.2,1),
                opacity .26s ease,
-               padding .38s cubic-bezier(.4,0,.2,1),
                transform .3s ease;
   }
+  /* The padding lives on the inner box, never on the animated one: max-height
+     cannot compress padding or border, so putting it outside left a strip of
+     white showing under the bar when closed. Measuring this box also gives
+     main.js an exact height, since nothing here is mid-transition. */
+  .nav-drawer{display:flex;flex-direction:column;padding:8px 22px 24px}
   .nav-links.open{
-    max-height:420px;opacity:1;padding:8px 22px 18px;
+    max-height:420px;opacity:1;
     transform:translateY(0);pointer-events:auto;
   }
-  .nav-links a{padding:13px 0;border-bottom:1px solid var(--line)}
-  .drawer-call{display:block;color:var(--pink)!important;font-weight:500;border-bottom:0!important}
+  .nav-links a{padding:13px 0;border-bottom:1px solid var(--line);text-align:center}
+  /* the phone number reads as the drawer's primary action, so give it the same
+     filled pill as the header button instead of a plain row */
+  .drawer-call{
+    display:block;width:max-content;margin:16px auto 0;
+    padding:12px 24px!important;border-radius:999px;border-bottom:0!important;
+    background:var(--pink);color:var(--white)!important;font-weight:500;
+    box-shadow:0 8px 20px -10px rgba(225,42,127,.8);
+  }
+  .nav-links a.drawer-call:hover{background:var(--pink-deep)}
   .burger{display:block;order:3;margin-left:6px}
   .nav-socials{order:2;margin-left:auto;gap:6px}
   .nav-socials .ico{width:34px;height:34px}

@@ -7,13 +7,19 @@ const mobileNav = window.matchMedia('(max-width:720px)');
    measured value rather than a generous constant matters on the way out: from a
    fixed cap the first slice of the transition is spent shrinking through empty
    space, which reads as a lag before anything moves. */
+/* Height comes from the inner .nav-drawer rather than scrollHeight: it carries
+   the padding, is never mid-transition and never capped, so its rendered height
+   is always the exact target for the outer box to animate to. */
+const drawer = links.querySelector('.nav-drawer');
+const drawerHeight = () => (drawer ? drawer.getBoundingClientRect().height : links.scrollHeight);
+
 function setMenu(open){
   links.classList.toggle('open', open);
   if (mobileNav.matches){
     if (open){
-      links.style.maxHeight = links.scrollHeight + 'px';
+      links.style.maxHeight = drawerHeight() + 'px';
     } else {
-      links.style.maxHeight = links.scrollHeight + 'px';
+      links.style.maxHeight = drawerHeight() + 'px';
       requestAnimationFrame(() => { links.style.maxHeight = '0px'; });
     }
   }
