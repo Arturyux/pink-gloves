@@ -43,9 +43,9 @@ section{padding:clamp(56px,8vw,92px) 0}
   backdrop-filter:blur(12px);
   border-bottom:1px solid var(--line);
 }
-.nav-in{display:flex;align-items:center;gap:20px;height:74px}
+.nav-in{display:flex;align-items:center;gap:20px;height:88px}
 .brand{display:block;flex:none;line-height:0}
-.brand img{height:90px;width:auto}
+.brand img{height:108px;width:auto}
 .nav-links{display:flex;gap:24px;margin-left:auto;font-family:"Jost",sans-serif;font-size:15px}
 .nav-links a{text-decoration:none;color:var(--muted);padding:4px 0;border-bottom:2px solid transparent;transition:color .15s,border-color .15s}
 .nav-links a:hover{color:var(--pink);border-color:var(--pink)}
@@ -638,15 +638,29 @@ footer.site{border-top:1px solid var(--line);background:var(--white)}
   .nav .btn{padding:12px 16px}
 }
 @media(max-width:720px){
-  .nav-in{height:66px}
-  .brand img{height:60px}
+  .nav-in{height:79px}
+  .brand img{height:72px}
+  /* The drawer stays displayed and collapses instead of toggling display, so
+     it can actually animate — display isn't transitionable. top:100% keeps it
+     pinned under the bar whatever height the bar ends up being. */
   .nav-links{
-    display:none;position:absolute;top:66px;left:0;right:0;
+    display:flex;position:absolute;top:100%;left:0;right:0;
     flex-direction:column;gap:0;background:var(--white);
-    border-bottom:1px solid var(--line);padding:8px 22px 18px;
+    border-bottom:1px solid var(--line);
     box-shadow:0 18px 30px -22px rgba(168,19,92,.5);
+    overflow:hidden;
+    max-height:0;opacity:0;padding:0 22px;
+    transform:translateY(-6px);
+    pointer-events:none;   /* links aren't clickable while collapsed */
+    transition:max-height .38s cubic-bezier(.4,0,.2,1),
+               opacity .26s ease,
+               padding .38s cubic-bezier(.4,0,.2,1),
+               transform .3s ease;
   }
-  .nav-links.open{display:flex}
+  .nav-links.open{
+    max-height:420px;opacity:1;padding:8px 22px 18px;
+    transform:translateY(0);pointer-events:auto;
+  }
   .nav-links a{padding:13px 0;border-bottom:1px solid var(--line)}
   .drawer-call{display:block;color:var(--pink)!important;font-weight:500;border-bottom:0!important}
   .burger{display:block;order:3;margin-left:6px}

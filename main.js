@@ -1,13 +1,33 @@
-/* ---- mobile menu ---- */
+/* ---- mobile menu: animated drawer, height measured via scrollHeight ---- */
 const burger = document.getElementById('burger');
 const links  = document.getElementById('navlinks');
-burger.addEventListener('click', () => {
-  const open = links.classList.toggle('open');
+const mobileNav = window.matchMedia('(max-width:720px)');
+
+/* The CSS caps the closed drawer at max-height:0. Setting the open height to a
+   measured value rather than a generous constant matters on the way out: from a
+   fixed cap the first slice of the transition is spent shrinking through empty
+   space, which reads as a lag before anything moves. */
+function setMenu(open){
+  links.classList.toggle('open', open);
+  if (mobileNav.matches){
+    if (open){
+      links.style.maxHeight = links.scrollHeight + 'px';
+    } else {
+      links.style.maxHeight = links.scrollHeight + 'px';
+      requestAnimationFrame(() => { links.style.maxHeight = '0px'; });
+    }
+  }
   burger.setAttribute('aria-expanded', open);
   burger.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
-});
-links.addEventListener('click', e => {
-  if (e.target.tagName === 'A') {
+}
+
+burger.addEventListener('click', () => setMenu(!links.classList.contains('open')));
+links.addEventListener('click', e => { if (e.target.tagName === 'A') setMenu(false); });
+
+// the inline height is mobile-only; leaving it set would cap the desktop row
+mobileNav.addEventListener('change', e => {
+  if (!e.matches){
+    links.style.maxHeight = '';
     links.classList.remove('open');
     burger.setAttribute('aria-expanded', 'false');
   }
