@@ -85,7 +85,7 @@ a concrete reason — the whole point is that the output is three files.
 - **Name:** Pink Gloves Cleaning
 - **Tagline:** "Clean home. Calm mind. More you."
 - **Secondary tagline (from print material):** "Care in every detail"
-- **Phone:** 07854 350480 (used in `tel:` and `wa.me/447854350480`)
+- **Phone:** +44 7493 662647 (used in `tel:` and `wa.me/447493662647`)
 - **Currency:** GBP. British spellings and date formats.
 - **Current promo:** £5 off first Basic Clean, £10 off first Deep Clean, "only on next week"
 
@@ -170,7 +170,7 @@ longer runs 1-2-3 — Clients was moved above Services later on)
 
 ### 1. Mobile menu
 Burger toggles `.open` on `#navlinks`, syncs `aria-expanded`, closes on any link
-click. Below 720px the drawer also carries a "Call 07854 350480" link, because
+click. Below 720px the drawer also carries a "Call +44 7493 662647" link, because
 the header call button is hidden at that width.
 
 ### 2. Draggable glove — the signature element

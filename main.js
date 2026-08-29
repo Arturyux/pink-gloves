@@ -46,6 +46,19 @@ mobileNav.addEventListener('change', e => {
   }
 });
 
+/* ---- hero headline: cycle the candidate wordings so both can be judged in
+   place. Once one is chosen, delete the other <span> and this block. ---- */
+(function(){
+  const lines = document.querySelectorAll('#headline .headline-line');
+  if (lines.length < 2) return;
+  let i = 0;
+  setInterval(() => {
+    lines[i].classList.remove('is-on');
+    i = (i + 1) % lines.length;
+    lines[i].classList.add('is-on');
+  }, 10000);
+})();
+
 /* ---- cumulative tier disclosure: animated dropdown, height measured via scrollHeight ---- */
 document.querySelectorAll('.inherits').forEach(btn => {
   const panel = document.getElementById(btn.dataset.toggle);
@@ -173,8 +186,8 @@ function showToast(msg){
       'Extras: ' + (extras.size ? [...extras].join(', ') : 'None'),
       '',
       // *…* is WhatsApp's bold syntax, so these prompts stand out in the chat
-      'My address: *(to see how far you are)*',
-      'Preferred date/time: *(to see if we are available)*',
+      'My address: *(so we can check we cover your area)*',
+      'Preferred date/time: *(so we can hold the slot for you)*',
       'Extra questions: (optional)',
       '',
       'Thanks!'
@@ -207,9 +220,13 @@ function showToast(msg){
     quoteExtrasEl.textContent = extras.size ? '+ ' + [...extras].join(', ') : '';
     const text = buildText();
     quoteText.value = text;
+    // grow to the full message, so a long extras list never has to scroll.
+    // Must run before openQuote(), which measures the panel for its animation.
+    quoteText.style.height = 'auto';
+    quoteText.style.height = quoteText.scrollHeight + 'px';
     // wa.me carries the whole message in the URL, so WhatsApp opens with it
     // already typed out and the visitor only has to hit send
-    waBtn.href = 'https://wa.me/447854350480?text=' + encodeURIComponent(text);
+    waBtn.href = 'https://wa.me/447493662647?text=' + encodeURIComponent(text);
     openQuote();
   }
 
@@ -229,6 +246,18 @@ function showToast(msg){
       card.classList.add('chosen');
       render();
       if (extrasSection) extrasSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+
+  /* the whole card is a hit target for its own Select button, so tapping
+     anywhere on it picks that tier. Delegating to the button rather than
+     duplicating the logic keeps the two paths from drifting apart. */
+  document.querySelectorAll('.tier').forEach(card => {
+    card.addEventListener('click', e => {
+      // let the card's own controls (Select, the "plus:" disclosure) act normally
+      if (e.target.closest('a, button')) return;
+      const link = card.querySelector('.choose-tier');
+      if (link) link.click();
     });
   });
 
@@ -627,6 +656,7 @@ function spongePoint(glove){
   const GROW_LEFT = 2.2, GROW_RIGHT = 0.22, GROW_UP = 0.18, GROW_DOWN = 0.5;
   const REACH = 0.22;       // wipe radius, as a fraction of the glove's width
   const MIN_GAP = 1.05;     // smudges are ragged, so a little overlap reads fine
+  const EDGE_PAD = 26;      // clear space to leave against the viewport sides
 
   const spots = new Map();  // element -> {cx, cy, size}
   let refillTimer = null;
@@ -666,10 +696,15 @@ function spongePoint(glove){
 
   function bounds(){
     const w = stage.clientWidth, h = stage.clientHeight || glove.offsetHeight;
+    // stage-local x of the viewport edges, pulled in by EDGE_PAD, so nothing
+    // spawns flush against (or half off) the side of the screen
+    const sr = stage.getBoundingClientRect();
+    const minX = EDGE_PAD - sr.left;
+    const maxX = window.innerWidth - EDGE_PAD - sr.left;
     return {
       w, h,
-      left:  -w * GROW_LEFT,
-      right:  w * (1 + GROW_RIGHT),
+      left:  Math.max(-w * GROW_LEFT, minX),
+      right: Math.min(w * (1 + GROW_RIGHT), maxX),
       top:   -h * GROW_UP,
       bottom: h * (1 + GROW_DOWN),
     };

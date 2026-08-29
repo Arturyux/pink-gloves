@@ -3,8 +3,6 @@
   --pink:#E12A7F;
   --pink-deep:#A8135C;
   --pink-soft:#FCE1EC;
-  --white:#FFFFFF;
-  --white:#FFFBFC;
   --ink:#2A1F25;
   --muted:#7E6B74;
   --line:#F4D3E1;
@@ -39,7 +37,7 @@ section{padding:clamp(38px,5vw,60px) 0}
 /* ============ stage 0 · navbar ============ */
 .nav{
   position:sticky;top:0;z-index:60;
-  background:rgba(255,251,252,.88);
+  background:rgba(255,255,255,.88);
   backdrop-filter:blur(12px);
   border-bottom:1px solid var(--line);
 }
@@ -87,10 +85,6 @@ section{padding:clamp(38px,5vw,60px) 0}
 /* ============ stage 1 · hero ============ */
 body{overflow-x:hidden}
 .hero{padding-top:clamp(24px,4vw,40px);padding-bottom:clamp(40px,6vw,64px);position:relative}
-.hero::before{
-  content:"";position:absolute;top:-180px;right:0;width:560px;height:560px;
-  background:radial-gradient(circle,rgba(255,255,255),transparent 68%);z-index:-1;pointer-events:none;
-}
 
 /* --- promo band, sits on top --- */
 .promo{
@@ -138,6 +132,14 @@ body{overflow-x:hidden}
   margin:0 0 28px;
 }
 .hero h1 .script{color:var(--pink);font-size:1.22em;line-height:.9}
+/* Two candidate headlines stacked in one grid cell, so the h1 reserves the
+   taller one's height and swapping between them can't shift the layout. */
+.headline{display:grid}
+.headline-line{
+  grid-area:1/1;opacity:0;visibility:hidden;
+  transition:opacity .5s ease,visibility .5s;
+}
+.headline-line.is-on{opacity:1;visibility:visible}
 .hero-cta{display:flex;flex-wrap:wrap;gap:12px}
 
 /* --- draggable glove --- */
@@ -231,6 +233,8 @@ body{overflow-x:hidden}
   position:relative;z-index:0;
   transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease;
 }
+/* the whole card selects its tier, so show it's clickable */
+.tier{cursor:pointer}
 .tier:hover{transform:translateY(-3px);box-shadow:var(--shadow);border-color:var(--pink)}
 .tier.featured{border-color:var(--pink);box-shadow:var(--shadow);position:relative}
 .tier.chosen{border-color:var(--pink);box-shadow:0 0 0 3px var(--pink-soft),var(--shadow)}
@@ -436,7 +440,8 @@ body{overflow-x:hidden}
 }
 .quote-reset:hover{color:var(--pink)}
 .quote-text{
-  display:block;width:100%;resize:vertical;min-height:150px;
+  /* fixed handle off; main.js grows it to fit the message so nothing scrolls */
+  display:block;width:100%;resize:none;overflow:hidden;min-height:150px;
   font-family:"Inter",system-ui,sans-serif;font-size:14px;line-height:1.5;
   color:var(--ink);background:var(--white);border:1px solid var(--line);
   border-radius:12px;padding:14px 16px;margin-bottom:14px;
