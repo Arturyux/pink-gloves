@@ -46,19 +46,6 @@ mobileNav.addEventListener('change', e => {
   }
 });
 
-/* ---- hero headline: cycle the candidate wordings so both can be judged in
-   place. Once one is chosen, delete the other <span> and this block. ---- */
-(function(){
-  const lines = document.querySelectorAll('#headline .headline-line');
-  if (lines.length < 2) return;
-  let i = 0;
-  setInterval(() => {
-    lines[i].classList.remove('is-on');
-    i = (i + 1) % lines.length;
-    lines[i].classList.add('is-on');
-  }, 10000);
-})();
-
 /* ---- cumulative tier disclosure: animated dropdown, height measured via scrollHeight ---- */
 document.querySelectorAll('.inherits').forEach(btn => {
   const panel = document.getElementById(btn.dataset.toggle);
@@ -581,7 +568,7 @@ function spongePoint(glove){
   return { x: glove.offsetLeft + ox + p.x, y: glove.offsetTop + oy + p.y };
 }
 
-/* ---- draggable glove with bubble trail (stage 1) ---- */
+/* ---- draggable glove with bubble trail ---- */
 (function(){
   const stage = document.getElementById('gloveStage');
   const glove = document.getElementById('glove');
@@ -864,7 +851,7 @@ function spongePoint(glove){
 /* ---- year ---- */
 document.getElementById('yr').textContent = new Date().getFullYear();
 
-/* ---- Google reviews hook (stage 4) ------------------------------------
+/* ---- Google reviews hook ------------------------------------
    Leave off until you have the place_id + a referrer-restricted key.
    Add to <head>:
    <script async src="https://maps.googleapis.com/maps/api/js?key=KEY&loading=async&libraries=places"><\/script>

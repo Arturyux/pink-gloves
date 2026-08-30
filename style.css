@@ -34,7 +34,7 @@ h2{
 .section-intro{color:var(--muted);max-width:52ch}
 section{padding:clamp(38px,5vw,60px) 0}
 
-/* ============ stage 0 · navbar ============ */
+/* ============ navbar ============ */
 .nav{
   position:sticky;top:0;z-index:60;
   background:rgba(255,255,255,.88);
@@ -82,7 +82,7 @@ section{padding:clamp(38px,5vw,60px) 0}
 .burger{display:none;margin-left:auto;background:none;border:0;padding:8px;cursor:pointer}
 .burger span{display:block;width:24px;height:2px;background:var(--ink);margin:5px 0;transition:.2s}
 
-/* ============ stage 1 · hero ============ */
+/* ============ hero ============ */
 body{overflow-x:hidden}
 .hero{padding-top:clamp(24px,4vw,40px);padding-bottom:clamp(40px,6vw,64px);position:relative}
 
@@ -132,14 +132,47 @@ body{overflow-x:hidden}
   margin:0 0 28px;
 }
 .hero h1 .script{color:var(--pink);font-size:1.22em;line-height:.9}
-/* Two candidate headlines stacked in one grid cell, so the h1 reserves the
-   taller one's height and swapping between them can't shift the layout. */
-.headline{display:grid}
-.headline-line{
-  grid-area:1/1;opacity:0;visibility:hidden;
-  transition:opacity .5s ease,visibility .5s;
+
+/* ============================================================
+   HERO MARK — Glasgow logo + caption. Everything you'd want to
+   nudge by hand lives in this one block.
+   ------------------------------------------------------------
+   .hero-mark        : where the whole group sits (nudge x / y here)
+   .hero-mark-img    : how big the logo is
+   .hero-mark-text   : the caption under it
+   ============================================================ */
+.hero-mark{
+  position:relative;                 /* the caption is placed against this box */
+  width:clamp(240px, 32vw, 380px);   /* <-- overall size: min, preferred, max */
+  /* The caption is absolutely positioned, so it adds no height of its own,
+     and the script face overhangs its line box (long descender on the g).
+     This gap is what keeps the buttons clear of it. */
+  margin:0 0 64px;                   /* <-- gap before the buttons */
+  transform:translate(0, 0);         /* <-- nudge the whole group: x, y */
 }
-.headline-line.is-on{opacity:1;visibility:visible}
+.hero-mark-img{width:100%;height:auto;display:block; opacity: .5;}
+/* The two lines are placed separately so each can be nudged on its own.
+   Both are absolute against .hero-mark, so neither adds height — the gap
+   before the buttons is the margin on .hero-mark above. */
+.hero .hero-mark-text{
+  margin:0;
+  font-family:"Jost",sans-serif;font-weight:600;
+  font-size:clamp(50px, 3.4vw, 58px);
+
+  line-height:1.15;letter-spacing:-.01em;
+  color:var(--ink);
+}
+.hero .hero-mark-top,
+.hero .hero-mark-city{
+  position:absolute;left:0;right:0;text-align:center;
+  white-space:nowrap;   /* each line always stays on one line */
+}
+.hero .hero-mark-top{
+  bottom:70%;
+}
+.hero .hero-mark-city{
+  bottom:55%;      /* <-- moves "Glasgow" up / down */
+}
 .hero-cta{display:flex;flex-wrap:wrap;gap:12px}
 
 /* --- draggable glove --- */
@@ -222,7 +255,7 @@ body{overflow-x:hidden}
   .drag-hint{bottom:-6px}
 }
 
-/* ============ stage 2 · services ============ */
+/* ============ services ============ */
 /* Sections alternate white -> tint -> white -> tint -> white. Clients now sits
    second, so it takes the tint and services drops back to the page white. */
 #clients{background:var(--white)}
@@ -468,7 +501,7 @@ body{overflow-x:hidden}
 .quote-hint{margin-top:12px;color:var(--muted);font-size:13.5px}
 .quote-hint a{color:var(--pink-deep);text-decoration:underline}
 
-/* ============ stage 3 · clients ============ */
+/* ============ clients ============ */
 .clients-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:34px}
 .client{
   background:var(--white);border:1px solid var(--line);border-radius:var(--r);padding:24px 20px;
@@ -481,7 +514,7 @@ body{overflow-x:hidden}
 .client h3{font-family:"Jost",sans-serif;font-weight:500;font-size:18px;margin:8px 0 6px}
 .client p{color:var(--muted);font-size:14.5px}
 
-/* ============ stage 4 · reviews ============ */
+/* ============ reviews ============ */
 .reviews{background:var(--white)}
 .rating-bar{
   display:flex;flex-wrap:wrap;align-items:center;gap:16px;margin-top:26px;
@@ -548,7 +581,7 @@ body{overflow-x:hidden}
 .review footer b{font-weight:500;font-size:14.5px;display:block}
 .review footer span{font-size:12.5px;color:var(--muted)}
 
-/* ============ stage 5 · pictures ============ */
+/* ============ pictures ============ */
 .gallery{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:180px;gap:14px;margin-top:34px}
 .shot{
   border-radius:var(--r);overflow:hidden;position:relative;
@@ -628,7 +661,7 @@ body{overflow-x:hidden}
 .lb-arrow:hover,.lb-arrow:focus-visible{background:rgba(255,255,255,.3)}
 .lb-arrow:active{transform:translateY(-50%) scale(.94)}
 
-/* ============ stage 0 · footer ============ */
+/* ============ footer ============ */
 .cta-band{
   background:var(--pink);color:var(--white);border-radius:var(--r);
   padding:clamp(28px,5vw,44px);display:flex;flex-wrap:wrap;gap:22px;
@@ -757,6 +790,9 @@ footer.site{border-top:1px solid var(--line);background:var(--white)}
   .hero-grid{grid-template-columns:1fr;text-align:center;margin-top:32px;position:relative}
   .hero-cta{justify-content:center}
   .hero-copy{padding-top:20px}
+  /* hero mark, mobile: centred in the column and a little smaller */
+  .hero-mark{width:clamp(200px, 58vw, 300px);margin:0 auto 44px}
+  .hero .hero-mark-text{font-size:clamp(30px, 4.4vw, 40px)}
   .glove-stage{
     position:absolute;top:0px;right:-30px;
     width:120px;min-height:0;

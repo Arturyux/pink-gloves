@@ -37,7 +37,7 @@
 </head>
 <body>
 
-<!-- ══════ STAGE 0 · NAVBAR ══════ -->
+<!-- ══════ NAVBAR ══════ -->
 <header class="nav">
   <div class="wrap nav-in">
     <a class="brand" href="#top">
@@ -67,18 +67,20 @@
 
 <main id="top">
 
-<!-- ══════ STAGE 1 · HERO + PROMO ══════ -->
+<!-- ══════ HERO + PROMO ══════ -->
 <section class="hero">
   <div class="wrap">
 
     <div class="hero-grid">
       <div class="hero-copy">
-        <h1 class="headline" id="headline">
-          <!-- two candidates, swapped every 10s by main.js so both can be seen
-               in place. Pick one and delete the other span when decided. -->
-          <span class="headline-line is-on">More time.<br>More life.<br><span class="script">More you.</span></span>
-          <span class="headline-line">Less cleaning.<br><span class="script">More living.</span></span>
-        </h1>
+        <div class="hero-mark">
+          <img class="hero-mark-img" src="/img/glasgowLogo.png"
+               alt="Pink Gloves Cleaning, Glasgow" width="851" height="826">
+          <h1 class="hero-mark-text">
+            <span class="hero-mark-top">Trusted cleaners</span>
+            <span class="hero-mark-city script">Glasgow</span>
+          </h1>
+        </div>
         <div class="hero-cta">
           <a class="btn" href="#book">Book your clean</a>
           <a class="btn btn-ghost" href="#services">See what's included</a>
@@ -95,7 +97,7 @@
   </div>
 </section>
 
-<!-- ══════ STAGE 3 · CLIENTS ══════ -->
+<!-- ══════ CLIENTS ══════ -->
 <section id="clients">
   <div class="wrap">
     <p class="eyebrow">What we clean</p>
@@ -159,7 +161,7 @@
   </div>
 </section>
 
-<!-- ══════ STAGE 2 · SERVICES ══════ -->
+<!-- ══════ SERVICES ══════ -->
 <section class="services" id="services">
   <div class="wrap">
     <p class="eyebrow">Choose what works for you</p>
@@ -310,7 +312,7 @@
   </div>
 </section>
 
-<!-- ══════ STAGE 4 · REVIEWS ══════ -->
+<!-- ══════ REVIEWS ══════ -->
 <section class="reviews" id="reviews">
   <div class="wrap">
     <p class="eyebrow">What clients say</p>
@@ -395,7 +397,7 @@
   </div>
 </section>
 
-<!-- ══════ STAGE 5 · PICTURES ══════ -->
+<!-- ══════ PICTURES ══════ -->
 <section id="gallery">
   <div class="wrap">
     <p class="eyebrow">Our work</p>
@@ -436,7 +438,7 @@
   </div>
 </section>
 
-<!-- ══════ STAGE 0 · CTA + FOOTER ══════ -->
+<!-- ══════ CTA + FOOTER ══════ -->
 <div class="wrap" id="book">
   <div class="cta-band">
     <div>
@@ -540,9 +542,6 @@
 </div>
 
 
-<!-- Structured data: this, not the keywords tag, is what a search engine
-     actually reads for a local business. Everything here is confirmed fact -
-     no street address, opening hours or rating, since those stay unverified. -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
