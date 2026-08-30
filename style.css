@@ -144,10 +144,11 @@ body{overflow-x:hidden}
 .hero-mark{
   position:relative;                 /* the caption is placed against this box */
   width:clamp(240px, 32vw, 380px);   /* <-- overall size: min, preferred, max */
-  /* The caption is absolutely positioned, so it adds no height of its own,
-     and the script face overhangs its line box (long descender on the g).
-     This gap is what keeps the buttons clear of it. */
-  margin:0 0 64px;                   /* <-- gap before the buttons */
+  /* The caption is absolutely positioned, so it adds no height of its own —
+     this margin is the entire gap between the picture and the buttons. Safe to
+     keep small while both caption lines sit inside the image; if "Glasgow" is
+     moved back down near the edge its descender will need room again. */
+  margin:0 0 8px;                    /* <-- gap before the buttons */
   transform:translate(0, 0);         /* <-- nudge the whole group: x, y */
 }
 .hero-mark-img{width:100%;height:auto;display:block; opacity: .5;}
@@ -793,9 +794,16 @@ footer.site{border-top:1px solid var(--line);background:var(--white)}
   .hero-grid{grid-template-columns:1fr;text-align:center;margin-top:32px;position:relative}
   .hero-cta{justify-content:center}
   .hero-copy{padding-top:20px}
-  /* hero mark, mobile: centred in the column and a little smaller */
-  .hero-mark{width:clamp(200px, 58vw, 300px);margin:0 auto 44px}
-  .hero .hero-mark-text{font-size:clamp(30px, 4.4vw, 40px)}
+  /* hero mark, mobile: as wide as the column allows, 4px gap each side.
+     width:auto on a block fills the parent, so it shrinks with the viewport
+     and can never overflow — unlike a clamp with a px floor, which stays
+     wider than a small phone and gets cut off. */
+  .hero-mark{width:auto;margin:0 4px 8px}
+  /* Sized in vw so it scales with the mark. The line is white-space:nowrap,
+     so it has to fit the container outright: "Trusted cleaners" runs about
+     8.3x the font-size in Jost 600, and the column is roughly viewport-52px.
+     Past ~10vw it gets clipped rather than wrapping. */
+  .hero .hero-mark-text{font-size:clamp(26px, 10vw, 44px)}
   .glove-stage{
     position:absolute;top:0px;right:-30px;
     width:120px;min-height:0;

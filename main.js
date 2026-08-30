@@ -883,11 +883,50 @@ function spongePoint(glove){
     }, REFILL_MS);
   }
 
-  /* Short haptic tick on a phone. Android Chrome and Firefox support this;
-     iOS Safari has no Vibration API at all, so iPhones simply get nothing.
-     Guarded because some browsers expose it but throw when it isn't allowed. */
+  /* Haptics, by two different routes.
+
+     Android (Chrome, Firefox) has the Vibration API and takes a duration or a
+     pattern directly.
+
+     iOS has no Vibration API in any browser — they all run WebKit, and
+     navigator.vibrate is simply undefined. The one hook Safari 17.4+ does give
+     is that toggling an <input type="checkbox" switch> plays a system haptic,
+     so a hidden switch is clicked to borrow it. That yields a single fixed tick
+     with no control over strength or length, so a pattern is approximated by
+     firing one tick per pulse at the right offsets. It also needs "System
+     Haptics" turned on in Settings > Sounds & Haptics, and does nothing on
+     iOS below 17.4. */
+  let hapticSwitch = null;
+  function iosTick(){
+    if (!hapticSwitch){
+      const label = document.createElement('label');
+      label.setAttribute('aria-hidden', 'true');
+      label.style.display = 'none';
+      const input = document.createElement('input');
+      input.type = 'checkbox';
+      input.setAttribute('switch', '');   // Safari-only control that carries a haptic
+      input.tabIndex = -1;
+      label.appendChild(input);
+      document.body.appendChild(label);
+      hapticSwitch = label;
+    }
+    try { hapticSwitch.click(); } catch {}
+  }
+
   function buzz(pattern){
-    try { if (navigator.vibrate) navigator.vibrate(pattern); } catch {}
+    try {
+      if (navigator.vibrate) { navigator.vibrate(pattern); return; }
+    } catch {}
+
+    // no Vibration API: fall back to the iOS switch trick
+    if (typeof pattern === 'number') { iosTick(); return; }
+    if (!Array.isArray(pattern)) return;
+    // pattern is [wait, buzz, wait, buzz, ...] — tick at each buzz's start
+    let at = 0;
+    pattern.forEach((ms, i) => {
+      if (i % 2 === 1) setTimeout(iosTick, at);   // odd entries are the pulses
+      at += ms;
+    });
   }
 
   function wipe(el){
