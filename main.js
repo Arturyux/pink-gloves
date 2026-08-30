@@ -651,6 +651,53 @@ function spongePoint(glove){
   if (reduce) glove.classList.remove('idle');
 })();
 
+/* ---- polishing the Glasgow mark: dragging the sponge across the picture
+   leaves a sparkle trail, so it reads as being buffed clean ---- */
+(function(){
+  const glove = document.getElementById('glove');
+  const stage = document.getElementById('gloveStage');
+  const mark  = document.querySelector('.hero-mark');
+  const img   = document.querySelector('.hero-mark-img');
+  if (!glove || !stage || !mark || !img) return;
+
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const RATE_MS = 70;
+  let last = 0;
+
+  glove.addEventListener('pointermove', () => {
+    // .dragging is set by the glove block, so this only fires on a real drag
+    // rather than on hover
+    if (reduce || !glove.classList.contains('dragging')) return;
+    const now = performance.now();
+    if (now - last < RATE_MS) return;
+
+    // spongePoint() is stage-local; lift it to viewport coords to test against
+    // the picture, which lives in a different container
+    const sp = spongePoint(glove);
+    const sr = stage.getBoundingClientRect();
+    const x = sr.left + sp.x, y = sr.top + sp.y;
+
+    const ir = img.getBoundingClientRect();
+    if (x < ir.left || x > ir.right || y < ir.top || y > ir.bottom) return;
+    last = now;
+
+    const mr = mark.getBoundingClientRect();
+    const size = 15 + Math.random() * 15;
+    const el = document.createElement('span');
+    el.className = 'sparkle';
+    el.style.setProperty('--s', size + 'px');
+    el.style.setProperty('--dx', (Math.random() * 30 - 15).toFixed(1) + 'px');
+    el.style.setProperty('--dy', (-14 - Math.random() * 20).toFixed(1) + 'px');
+    el.style.setProperty('--dur', (1100 + Math.random() * 700) + 'ms');
+    el.style.left = (x - mr.left - size / 2) + 'px';
+    el.style.top  = (y - mr.top  - size / 2) + 'px';
+    mark.appendChild(el);
+    // timeout rather than animationend, which never fires under reduced motion.
+    // Must outlast the longest --dur above, or a spark is cut off mid-shine.
+    setTimeout(() => el.remove(), 2000);
+  });
+})();
+
 /* ---- wipe-the-dirt: spots around the glove that only the sponge corner of the
    glove clears, each popping into sparkles ---- */
 (function(){
@@ -687,12 +734,51 @@ function spongePoint(glove){
   const rewardClose = document.getElementById('rewardClose');
   let lastFocused = null;
 
+  /* Two seconds of sparks around the edge of the reward card. They are appended
+     to .reward, which is position:fixed inset:0, so its box is the viewport and
+     local coordinates are just viewport coordinates. */
+  function celebrate(){
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const card = reward.querySelector('.reward-card');
+    if (!card) return;
+
+    const until = performance.now() + 2000;
+    (function pop(){
+      if (performance.now() > until || reward.hidden) return;
+
+      const r = card.getBoundingClientRect();
+      const pad = 10 + Math.random() * 22;      // how far outside the edge
+      const side = Math.floor(Math.random() * 4);
+      let x, y;
+      if (side === 0)      { x = r.left + Math.random() * r.width;  y = r.top - pad; }
+      else if (side === 1) { x = r.right + pad;                     y = r.top + Math.random() * r.height; }
+      else if (side === 2) { x = r.left + Math.random() * r.width;  y = r.bottom + pad; }
+      else                 { x = r.left - pad;                      y = r.top + Math.random() * r.height; }
+
+      const size = 14 + Math.random() * 16;
+      const el = document.createElement('span');
+      el.className = 'sparkle';
+      el.style.setProperty('--s', size + 'px');
+      el.style.setProperty('--dx', (Math.random() * 34 - 17).toFixed(1) + 'px');
+      el.style.setProperty('--dy', (-10 - Math.random() * 26).toFixed(1) + 'px');
+      el.style.setProperty('--dur', (1100 + Math.random() * 700) + 'ms');
+      el.style.left = (x - size / 2) + 'px';
+      el.style.top  = (y - size / 2) + 'px';
+      reward.appendChild(el);
+      setTimeout(() => el.remove(), 2000);
+
+      setTimeout(pop, 70 + Math.random() * 60);
+    })();
+  }
+
   function openReward(){
     if (!reward) return;
     lastFocused = document.activeElement;
     reward.hidden = false;
     document.body.style.overflow = 'hidden';
     if (rewardClose) rewardClose.focus();
+    // let the card's entry animation start before ringing it with sparks
+    setTimeout(celebrate, 180);
   }
   function closeReward(){
     if (!reward || reward.hidden || reward.classList.contains('closing')) return;
@@ -797,12 +883,20 @@ function spongePoint(glove){
     }, REFILL_MS);
   }
 
+  /* Short haptic tick on a phone. Android Chrome and Firefox support this;
+     iOS Safari has no Vibration API at all, so iPhones simply get nothing.
+     Guarded because some browsers expose it but throw when it isn't allowed. */
+  function buzz(pattern){
+    try { if (navigator.vibrate) navigator.vibrate(pattern); } catch {}
+  }
+
   function wipe(el){
     const spot = spots.get(el);
     spots.delete(el);
     el.classList.add('cleared');
     setTimeout(() => el.remove(), 300);
     sparkle(spot.cx, spot.cy);
+    buzz(22);                       // one smudge gone
 
     if (spots.size === 0){
       // board clear: stop topping it back up, and pay the reward out once the
@@ -810,6 +904,7 @@ function spongePoint(glove){
       won = true;
       clearTimeout(refillTimer);
       refillTimer = null;
+      buzz([0, 30, 60, 30, 60, 70]); // all clear: a longer celebratory pattern
       setTimeout(openReward, 600);
       return;
     }

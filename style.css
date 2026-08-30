@@ -235,10 +235,13 @@ body{overflow-x:hidden}
   clip-path:polygon(50% 0%,60% 40%,100% 50%,60% 60%,50% 100%,40% 60%,0% 50%,40% 40%);
   animation:sparkle-pop var(--dur,700ms) ease-out forwards;
 }
+/* holds full opacity between 22% and 62% so each spark actually shines for a
+   while, instead of peaking for an instant and immediately fading */
 @keyframes sparkle-pop{
   0%{opacity:0;transform:translate(0,0) scale(.2) rotate(0deg)}
-  35%{opacity:1;transform:translate(calc(var(--dx,0px)*.4),calc(var(--dy,0px)*.4)) scale(1.15) rotate(45deg)}
-  100%{opacity:0;transform:translate(var(--dx,0px),var(--dy,0px)) scale(.35) rotate(110deg)}
+  22%{opacity:1;transform:translate(calc(var(--dx,0px)*.25),calc(var(--dy,0px)*.25)) scale(1.2) rotate(30deg)}
+  62%{opacity:1;transform:translate(calc(var(--dx,0px)*.65),calc(var(--dy,0px)*.65)) scale(1.05) rotate(70deg)}
+  100%{opacity:0;transform:translate(var(--dx,0px),var(--dy,0px)) scale(.4) rotate(110deg)}
 }
 
 /* from tablet up the glove floats free, over the copy, top layer */
@@ -799,7 +802,15 @@ footer.site{border-top:1px solid var(--line);background:var(--white)}
     z-index:50;pointer-events:none;
   }
   .glove{width:100%;pointer-events:auto}
-  .drag-hint{display:none}
+  /* Shown on phones too. It was hidden here because at desktop size the text
+     is wider than the 120px glove stage and spilled off the right edge, so it
+     is scaled down and kept on one line rather than switched off. */
+  .drag-hint{
+    display:flex;
+    bottom:-16px;
+    font-size:9.5px;letter-spacing:.1em;gap:5px;
+    white-space:nowrap;opacity:.85;
+  }
 
   /* services */
   .tier{text-align:center;align-items:center}
