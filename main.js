@@ -159,6 +159,39 @@ function showToast(msg){
   toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
 }
 
+/* ---- floating share button: hands off to the OS share sheet where there is
+   one (all mobile browsers, Safari, Edge), and falls back to copying the link
+   on desktop Chrome/Firefox, which have no navigator.share. ---- */
+(function(){
+  const btn = document.getElementById('shareBtn');
+  if (!btn) return;
+
+  btn.addEventListener('click', async () => {
+    const payload = {
+      title: 'Pink Gloves Cleaning',
+      text: 'Home and commercial cleaning in Glasgow and the surrounding area.',
+      url: location.href,
+    };
+
+    if (navigator.share){
+      try {
+        await navigator.share(payload);
+      } catch (err) {
+        // AbortError just means the sheet was dismissed — not worth a message
+        if (err && err.name !== 'AbortError') showToast('Could not open sharing');
+      }
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(location.href);
+      showToast('Link copied');
+    } catch {
+      showToast('Copy this page link to share');
+    }
+  });
+})();
+
 /* ---- build-your-request: choose a tier, tick extras, get a ready-to-send message ---- */
 (function(){
   const quote = document.getElementById('quote');

@@ -3,8 +3,33 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Pink Gloves Cleaning: home cleaning done properly</title>
-<meta name="description" content="Basic, deep and move-out cleaning for homes. £5 off your first basic clean, £10 off your first deep clean. Book on +44 7493 662647.">
+<title>Pink Gloves Cleaning</title>
+<meta name="description" content="Home and commercial cleaning in Glasgow and the surrounding area: regular house cleans, deep cleans, end of tenancy, offices and cafés. Reliable and thorough.">
+<link rel="canonical" href="https://pinkglovescleaning.co.uk/">
+
+<!-- Keywords are ignored by Google (since 2009) and kept only for the odd
+     smaller crawler. The terms that actually rank live in the title,
+     description, headings and the LocalBusiness block at the end of <body>. -->
+<meta name="keywords" content="cleaning services Glasgow, house cleaning Glasgow, domestic cleaners Glasgow, deep cleaning Glasgow, end of tenancy cleaning Glasgow, office cleaning Glasgow, commercial cleaning Glasgow, cafe and restaurant cleaning Glasgow, move out cleaning Scotland">
+
+<!-- Link previews (Facebook, WhatsApp, iMessage, LinkedIn). og:image must be an
+     absolute URL — a relative one is silently ignored by every crawler. -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Pink Gloves Cleaning">
+<meta property="og:title" content="Pink Gloves Cleaning">
+<meta property="og:description" content="Home and commercial cleaning in Glasgow and the surrounding area: regular house cleans, deep cleans, end of tenancy, offices and cafés. Reliable and thorough.">
+<meta property="og:url" content="https://pinkglovescleaning.co.uk/">
+<meta property="og:image" content="https://pinkglovescleaning.co.uk/img/og-share.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:alt" content="Pink Gloves Cleaning logo">
+<meta property="og:locale" content="en_GB">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Pink Gloves Cleaning">
+<meta name="twitter:description" content="Home and commercial cleaning in Glasgow and the surrounding area: regular house cleans, deep cleans, end of tenancy, offices and cafés. Reliable and thorough.">
+<meta name="twitter:image" content="https://pinkglovescleaning.co.uk/img/og-share.png">
+<meta name="theme-color" content="#E12A7F">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Jost:wght@400;500;600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
@@ -466,6 +491,13 @@
 
 </main>
 
+<button type="button" class="share-fab" id="shareBtn" aria-label="Share this site">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+    <path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/>
+  </svg>
+</button>
+
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <!-- shown once every smudge in the hero has been wiped away -->
@@ -507,6 +539,83 @@
   </div>
 </div>
 
+
+<!-- Structured data: this, not the keywords tag, is what a search engine
+     actually reads for a local business. Everything here is confirmed fact -
+     no street address, opening hours or rating, since those stay unverified. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "CleaningService",
+  "name": "Pink Gloves Cleaning",
+  "description": "Home and commercial cleaning in Glasgow and the surrounding area: regular house cleans, deep cleans, end of tenancy, offices and cafés.",
+  "url": "https://pinkglovescleaning.co.uk/",
+  "image": "https://pinkglovescleaning.co.uk/img/og-share.png",
+  "logo": "https://pinkglovescleaning.co.uk/img/logo.png",
+  "telephone": "+447493662647",
+  "areaServed": [
+    {
+      "@type": "City",
+      "name": "Glasgow"
+    },
+    {
+      "@type": "AdministrativeArea",
+      "name": "Scotland"
+    }
+  ],
+  "sameAs": [
+    "https://www.facebook.com/profile.php?id=61579447718736"
+  ],
+  "hasOfferCatalog": {
+    "@type": "OfferCatalog",
+    "name": "Cleaning services",
+    "itemListElement": [
+      {
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "Service",
+          "name": "Basic Clean"
+        }
+      },
+      {
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "Service",
+          "name": "Deep Clean"
+        }
+      },
+      {
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "Service",
+          "name": "Move In / Out Clean"
+        }
+      },
+      {
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "Service",
+          "name": "Office cleaning"
+        }
+      },
+      {
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "Service",
+          "name": "Café and restaurant cleaning"
+        }
+      },
+      {
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "Service",
+          "name": "End of tenancy cleaning"
+        }
+      }
+    ]
+  }
+}
+</script>
 <script type="module" src="/main.js"></script>
 </body>
 </html>

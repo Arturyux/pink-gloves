@@ -408,6 +408,24 @@ body{overflow-x:hidden}
 .reward-close:hover{background:var(--white);color:var(--pink-deep)}
 .reward-actions{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:20px}
 
+/* floating share button, bottom-right. Sits under the lightbox (300) and the
+   reward modal (400) so it can never overlap either, and clear of the toast. */
+.share-fab{
+  position:fixed;right:20px;bottom:20px;z-index:200;
+  width:52px;height:52px;border-radius:50%;border:0;cursor:pointer;
+  display:grid;place-items:center;
+  background:var(--pink-soft);color:var(--pink-deep);
+  box-shadow:0 10px 24px -10px rgba(225,42,127,.6);
+  transition:transform .14s ease,background .15s ease;
+}
+.share-fab svg{width:21px;height:21px}
+.share-fab:hover{background:#F8D2E2;transform:translateY(-2px)}
+.share-fab:active{transform:scale(.94)}
+@media(max-width:720px){
+  .share-fab{right:14px;bottom:14px;width:46px;height:46px}
+  .share-fab svg{width:19px;height:19px}
+}
+
 .toast{
   position:fixed;left:50%;bottom:24px;z-index:999;
   transform:translate(-50%,20px);
