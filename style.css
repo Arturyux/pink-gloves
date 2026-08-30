@@ -474,6 +474,7 @@ body{overflow-x:hidden}
 .rating-bar .meta{font-size:14px;color:var(--muted)}
 .rating-bar .src{margin-left:auto;font-size:13px;color:var(--muted)}
 .carousel{margin-top:16px}
+.reviews-cta{display:flex;justify-content:center;margin-top:24px}
 .review-window{position:relative;overflow:hidden;border-radius:var(--r);touch-action:pan-y}
 .review-grid{display:flex;gap:16px;transition:transform .5s cubic-bezier(.4,0,.2,1)}
 .car-arrow{
@@ -505,10 +506,22 @@ body{overflow-x:hidden}
 .review{
   background:var(--white);border:1px solid var(--line);border-radius:var(--r);padding:22px;
   flex:0 0 calc((100% - 32px) / 3);min-width:0;
+  /* column + margin-top:auto on the footer pins the reviewer to the bottom, so
+     names line up across cards whatever the quote length. The track is a flex
+     row, so cards already stretch to match the tallest. */
+  display:flex;flex-direction:column;
 }
-.review .stars{font-size:15px;margin-bottom:10px}
+/* Facebook recommendations are a yes/no, not a star score, so the card shows
+   what was actually given rather than inventing a rating out of five. */
+.review .rec{
+  display:inline-flex;align-items:center;gap:6px;margin-bottom:12px;
+  font-family:"Jost",sans-serif;font-size:12px;font-weight:600;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--pink-deep);
+  background:var(--pink-soft);border-radius:999px;padding:5px 12px;
+}
+.review .rec::before{content:"\2713";font-size:12px;font-weight:700}
 .review blockquote{font-size:15px;line-height:1.6}
-.review footer{display:flex;align-items:center;gap:11px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
+.review footer{display:flex;align-items:center;gap:11px;margin-top:auto;padding-top:14px;border-top:1px solid var(--line)}
 .avatar{
   width:36px;height:36px;border-radius:50%;flex:none;
   background:var(--pink-soft);color:var(--pink-deep);
