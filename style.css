@@ -491,7 +491,29 @@ body{overflow-x:hidden}
 .score{font-family:"Jost",sans-serif;font-weight:600;font-size:34px;line-height:1;color:var(--pink-deep)}
 .stars{color:var(--pink);letter-spacing:3px;font-size:17px}
 .rating-bar .meta{font-size:14px;color:var(--muted)}
-.rating-bar .src{margin-left:auto;font-size:13px;color:var(--muted)}
+.rating-bar .src{
+  margin-left:auto;font-size:13px;color:var(--muted);
+  display:inline-flex;align-items:center;gap:7px;
+}
+/* the Facebook mark, so it reads at a glance where the reviews come from.
+   Brand blue on a white disc, matching the circular .ico treatment used in the
+   nav and footer. The hairline border is what keeps the white circle visible
+   where it sits on white — on the pink button it reads on its own. */
+.fb-glyph{
+  width:32px;height:32px;flex:none;padding:4px;
+  fill:#1877F2;background:var(--white);
+  border:1px solid var(--line);border-radius:50%;
+}
+.reviews-cta .btn .fb-glyph{width:28px;height:28px;padding:4px;border-color:transparent}
+/* sits left of the score and is sized to carry the same weight as the 34px
+   "100%" beside it — the disc reads a little taller than the digits, which is
+   what makes the pair look balanced rather than the icon look shrunken */
+.rating-bar .fb-glyph--lg{width:46px;height:46px;padding:5px}
+/* every Facebook mark in this section is clickable through to the page */
+.rating-bar .fb-link{display:inline-flex;flex:none;text-decoration:none;transition:transform .12s ease}
+.rating-bar .fb-link:hover{transform:translateY(-2px)}
+a.src{text-decoration:none;transition:color .15s ease}
+a.src:hover{color:var(--pink-deep)}
 .carousel{margin-top:16px}
 .reviews-cta{display:flex;justify-content:center;margin-top:24px}
 .review-window{position:relative;overflow:hidden;border-radius:var(--r);touch-action:pan-y}
