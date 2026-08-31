@@ -85,7 +85,9 @@ a concrete reason — the whole point is that the output is three files.
 - **Name:** Pink Gloves Cleaning
 - **Tagline:** "Clean home. Calm mind. More you."
 - **Secondary tagline (from print material):** "Care in every detail"
-- **Phone:** +44 7493 662647 (used in `tel:` and `wa.me/447493662647`)
+- **Phone (calls):** 07854 350480 — `tel:07854350480`
+- **WhatsApp:** a different number, +44 7493 662647 — `wa.me/447493662647`.
+  Deliberate: the two channels are separate lines, don't unify them.
 - **Currency:** GBP. British spellings and date formats.
 - **Current promo:** £5 off first Basic Clean, £10 off first Deep Clean, "only on next week"
 
@@ -170,7 +172,7 @@ longer runs 1-2-3 — Clients was moved above Services later on)
 
 ### 1. Mobile menu
 Burger toggles `.open` on `#navlinks`, syncs `aria-expanded`, closes on any link
-click. Below 720px the drawer also carries a "Call +44 7493 662647" link, because
+click. Below 720px the drawer also carries a "Call 07854 350480" link, because
 the header call button is hidden at that width.
 
 ### 2. Draggable glove — the signature element

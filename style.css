@@ -133,47 +133,9 @@ body{overflow-x:hidden}
 }
 .hero h1 .script{color:var(--pink);font-size:1.22em;line-height:.9}
 
-/* ============================================================
-   HERO MARK — Glasgow logo + caption. Everything you'd want to
-   nudge by hand lives in this one block.
-   ------------------------------------------------------------
-   .hero-mark        : where the whole group sits (nudge x / y here)
-   .hero-mark-img    : how big the logo is
-   .hero-mark-text   : the caption under it
-   ============================================================ */
-.hero-mark{
-  position:relative;                 /* the caption is placed against this box */
-  width:clamp(240px, 32vw, 380px);   /* <-- overall size: min, preferred, max */
-  /* The caption is absolutely positioned, so it adds no height of its own —
-     this margin is the entire gap between the picture and the buttons. Safe to
-     keep small while both caption lines sit inside the image; if "Glasgow" is
-     moved back down near the edge its descender will need room again. */
-  margin:0 0 8px;                    /* <-- gap before the buttons */
-  transform:translate(0, 0);         /* <-- nudge the whole group: x, y */
-}
-.hero-mark-img{width:100%;height:auto;display:block; opacity: .5;}
-/* The two lines are placed separately so each can be nudged on its own.
-   Both are absolute against .hero-mark, so neither adds height — the gap
-   before the buttons is the margin on .hero-mark above. */
-.hero .hero-mark-text{
-  margin:0;
-  font-family:"Jost",sans-serif;font-weight:600;
-  font-size:clamp(50px, 3.4vw, 58px);
-
-  line-height:1.15;letter-spacing:-.01em;
-  color:var(--ink);
-}
-.hero .hero-mark-top,
-.hero .hero-mark-city{
-  position:absolute;left:0;right:0;text-align:center;
-  white-space:nowrap;   /* each line always stays on one line */
-}
-.hero .hero-mark-top{
-  bottom:70%;
-}
-.hero .hero-mark-city{
-  bottom:55%;      /* <-- moves "Glasgow" up / down */
-}
+/* the headline hosts the sparkle trail, so it needs to be a positioning
+   context for the absolutely placed sparks */
+.headline{position:relative}
 .hero-cta{display:flex;flex-wrap:wrap;gap:12px}
 
 /* --- draggable glove --- */
@@ -506,7 +468,9 @@ body{overflow-x:hidden}
 .quote-hint a{color:var(--pink-deep);text-decoration:underline}
 
 /* ============ clients ============ */
-.clients-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:34px}
+/* auto-fit so the row reflows as cards are added — it was a hard 4 columns,
+   which left the fifth card stranded on its own row */
+.clients-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:16px;margin-top:34px}
 .client{
   background:var(--white);border:1px solid var(--line);border-radius:var(--r);padding:24px 20px;
 }
@@ -798,12 +762,10 @@ footer.site{border-top:1px solid var(--line);background:var(--white)}
      width:auto on a block fills the parent, so it shrinks with the viewport
      and can never overflow — unlike a clamp with a px floor, which stays
      wider than a small phone and gets cut off. */
-  .hero-mark{width:auto;margin:0 4px 8px}
   /* Sized in vw so it scales with the mark. The line is white-space:nowrap,
      so it has to fit the container outright: "Trusted cleaners" runs about
      8.3x the font-size in Jost 600, and the column is roughly viewport-52px.
      Past ~10vw it gets clipped rather than wrapping. */
-  .hero .hero-mark-text{font-size:clamp(26px, 10vw, 44px)}
   .glove-stage{
     position:absolute;top:0px;right:-30px;
     width:120px;min-height:0;

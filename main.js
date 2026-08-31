@@ -651,14 +651,14 @@ function spongePoint(glove){
   if (reduce) glove.classList.remove('idle');
 })();
 
-/* ---- polishing the Glasgow mark: dragging the sponge across the picture
-   leaves a sparkle trail, so it reads as being buffed clean ---- */
+/* ---- polishing the headline: dragging the sponge across it leaves a sparkle
+   trail, so the words read as being buffed clean ---- */
 (function(){
   const glove = document.getElementById('glove');
   const stage = document.getElementById('gloveStage');
-  const mark  = document.querySelector('.hero-mark');
-  const img   = document.querySelector('.hero-mark-img');
-  if (!glove || !stage || !mark || !img) return;
+  const mark  = document.getElementById('headline');   // both the hit area and
+  const img   = mark;                                  // the sparkles' container
+  if (!glove || !stage || !mark) return;
 
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const RATE_MS = 70;
