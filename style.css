@@ -577,6 +577,10 @@ a.src:hover{color:var(--pink-deep)}
    reads as "the standout box" on this site, so the figures land without needing
    a section of their own. */
 .trust{
+  /* the sticky navbar would otherwise cover this when jumped to from the nav —
+     sections get away without it because their own padding absorbs the offset,
+     but this strip sits in a bare .wrap with none */
+  scroll-margin-top:104px;
   background:var(--white);border:1px solid var(--line);border-radius:var(--r);
   box-shadow:var(--shadow);overflow:hidden;
   display:flex;align-items:stretch;flex-wrap:wrap;
