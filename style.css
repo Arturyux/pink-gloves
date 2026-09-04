@@ -571,6 +571,40 @@ a.src:hover{color:var(--pink-deep)}
 .review footer b{font-weight:500;font-size:14.5px;display:block}
 .review footer span{font-size:12.5px;color:var(--muted)}
 
+/* ============ insurance strip ============
+   Deliberately rebuilt on the old promo-band shape: dark ink tag, a row of big
+   pink numerals, and a full-width note bar underneath. That pattern already
+   reads as "the standout box" on this site, so the figures land without needing
+   a section of their own. */
+.trust{
+  background:var(--white);border:1px solid var(--line);border-radius:var(--r);
+  box-shadow:var(--shadow);overflow:hidden;
+  display:flex;align-items:stretch;flex-wrap:wrap;
+}
+.trust-tag{
+  background:var(--ink);color:var(--white);
+  display:flex;align-items:center;gap:9px;padding:0 22px;
+  font-family:"Jost",sans-serif;font-size:12px;font-weight:600;
+  letter-spacing:.2em;text-transform:uppercase;white-space:nowrap;
+}
+.trust-tag svg{width:17px;height:17px;flex:none}
+.trust-items{display:flex;align-items:center;gap:28px;padding:18px 26px;flex:1;flex-wrap:wrap}
+.trust-item{display:flex;align-items:center;gap:12px}
+.trust-item .amt{
+  font-family:"Jost",sans-serif;font-weight:600;font-size:34px;line-height:1;
+  letter-spacing:-.03em;color:var(--pink);
+}
+.trust-item.alt .amt{color:var(--pink-deep)}
+.trust-item .txt{font-size:13px;line-height:1.35;color:var(--muted);max-width:18ch}
+.trust-item .txt b{display:block;color:var(--ink);font-weight:500;font-size:14.5px}
+.trust-note{
+  flex-basis:100%;width:100%;
+  display:flex;align-items:center;justify-content:center;
+  padding:12px 26px;text-align:center;
+  border-top:1px solid var(--line);
+  font-size:13.5px;color:var(--pink-deep);
+}
+
 /* ============ pictures ============ */
 .gallery{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:180px;gap:14px;margin-top:34px}
 .shot{
@@ -659,6 +693,11 @@ a.src:hover{color:var(--pink-deep)}
 }
 .cta-band h2{margin:0;color:var(--white)}
 .cta-band p{color:rgba(255,255,255,.9);margin-top:6px}
+.cta-trust{
+  display:flex;align-items:center;gap:8px;margin-top:14px;
+  font-size:13.5px;color:rgba(255,255,255,.92);
+}
+.cta-trust svg{width:17px;height:17px;flex:none}
 .cta-band .btn{background:var(--pink-soft);color:var(--pink-deep);box-shadow:none}
 /* the secondary button on the pink band is an outline, not a solid — must come
    after the rule above, which has the same specificity and would otherwise
@@ -680,6 +719,14 @@ footer.site{border-top:1px solid var(--line);background:var(--white)}
 .foot-socials{margin-top:18px}
 .foot-socials .ico{background:var(--white)}
 .tel{font-family:"Jost",sans-serif;font-size:22px;color:var(--pink-deep);text-decoration:none;display:inline-block;margin-top:4px}
+/* the quiet, factual version — where people look to check a business is real */
+.foot-legal{
+  border-top:1px solid var(--line);
+  padding:18px 0;display:grid;gap:5px;
+  font-size:12.5px;line-height:1.6;color:var(--muted);max-width:80ch;
+}
+.foot-legal b{color:var(--ink);font-weight:500}
+
 .foot-bottom{
   border-top:1px solid var(--line);padding:18px 0;
   display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;
@@ -803,6 +850,14 @@ footer.site{border-top:1px solid var(--line);background:var(--white)}
     font-size:9.5px;letter-spacing:.1em;gap:5px;
     white-space:nowrap;opacity:.85;
   }
+
+  /* insurance strip: tag becomes a full-width header, figures stack */
+  .trust-tag{flex-basis:100%;justify-content:center;padding:11px 22px}
+  .trust-items{gap:16px;padding:18px 22px;flex-direction:column;align-items:stretch}
+  .trust-item{gap:14px}
+  .trust-item .amt{min-width:78px;text-align:right}
+  .trust-item .txt{max-width:none;text-align:left}
+  .trust-note{padding:12px 22px}
 
   /* services */
   .tier{text-align:center;align-items:center}
